@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import {signIn} from "@/auth"
 import { DEFAULT_LOGIN_REDIRECT } from "@/route";
 import { AuthError } from "next-auth";
-
+import { generateVerificationToken } from "@/lib/tokens";
+import { getUserByEmail } from "@/data/user";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export async function POST(request:NextRequest){
     const reqBody = await request.json();
@@ -15,12 +17,27 @@ export async function POST(request:NextRequest){
         })
     }
     const {email,password}=validatedFields.data;
+    const existingUser = await getUserByEmail(email);
+    if(!existingUser || !existingUser.password || !existingUser.email){
+        return NextResponse.json({
+            error:"Email does not exist"
+        })
+    }
+    if(!existingUser.emailVerified){
+        const verificationToken = await generateVerificationToken(existingUser.email);
+        await sendVerificationEmail(
+            verificationToken.email,
+            verificationToken.token
+        )
+        return NextResponse.json({
+            success:"Confirmation email sent"
+        })
+    }
     try{
         await signIn("credentials",{
             email,
             password,
             redirectTo: DEFAULT_LOGIN_REDIRECT,
-            
         })
     }catch(error){
         if(error instanceof AuthError){

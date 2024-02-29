@@ -9,10 +9,10 @@ type Link = {
   url: string
 }
 
+
 const Navbar = () => {
   const [isMenuActive, setIsMenuActive] = useState(false)
   const [scrolling, setScrolling] = useState(false)
-
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
@@ -32,8 +32,8 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsMenuActive(!isMenuActive)
   }
-
-  return (
+    return (
+    
     <div
       className={`fixed w-screen z-50 bg-transparent bg-blend-saturation transition-colors ${
         scrolling ? 'bg-custom-color' : 'bg-transparent'
@@ -84,9 +84,9 @@ const Navbar = () => {
         {isMenuActive && <MobileNav />}
       </div>
     </div>
-  )
-}
-
+    )
+  }
+  
 const MobileNav = () => {
   return (
     <div className="z-200 mt-4 w-screen h-screen">

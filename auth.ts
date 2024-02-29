@@ -13,7 +13,7 @@ import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation
   role: UserRole;
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
-  email:string ;
+  email:string;
 };
 
 declare module "next-auth" {

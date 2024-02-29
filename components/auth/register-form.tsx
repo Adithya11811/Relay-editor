@@ -37,7 +37,7 @@ export const RegisterForm = () =>{
         startTransition(()=>{
             axios.post('/api/auth/register',values).then((data)=>{
                 console.log(data);
-                setSuccess(data.data.message)
+                setSuccess(data.data.success)
                 setError(data.data.error)
 
             })
