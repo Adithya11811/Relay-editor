@@ -19,8 +19,11 @@ import { Button } from "@/components/ui/button";
 import {FormError} from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const LoginForm = () =>{
+    const router = useRouter();
     const searchParams = useSearchParams();
     const urlError = searchParams.get("error") ==="OAuthAccountNotLinked"?"Email Already use with different provider":"";
     const [isPending,startTransition] = useTransition();
@@ -39,8 +42,10 @@ export const LoginForm = () =>{
         startTransition(()=>{
             axios.post('/api/auth/login',values).then((data)=>{
                 console.log(data);
-                    setSuccess(data.data.success)
-                    setError(data.data.error)
+                setSuccess(data.data.success)
+                router.push("/settings");
+            }).catch((error)=>{
+                setError(error.response.data.error)
             })
         })
     }
@@ -85,6 +90,15 @@ export const LoginForm = () =>{
                                         placeholder="*********" 
                                         type="password"/>
                                 </FormControl>
+                                <Button
+                                size="sm"
+                                variant="link"
+                                asChild
+                                className="px-0 font-normal">
+                                    <Link href="/auth/reset">
+                                        Forgot Password?
+                                    </Link>
+                                </Button>
                                 <FormMessage />
                             </FormItem>);
                         }}
@@ -93,7 +107,7 @@ export const LoginForm = () =>{
                     </div>
                     <FormError message={error || urlError}/>
                     <FormSuccess message={success}/>
-                    <Button type="submit" className="w-full">
+                    <Button disabled={isPending} type="submit" className="w-full">
                         Login
                     </Button>
                 </form>

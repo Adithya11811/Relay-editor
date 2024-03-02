@@ -6,13 +6,15 @@ import { AuthError } from "next-auth";
 import { generateVerificationToken } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
 import { sendVerificationEmail } from "@/lib/mail";
+import { m } from "framer-motion";
 
 export async function POST(request:NextRequest){
     const reqBody = await request.json();
     const validatedFields = LoginSchema.safeParse(reqBody);
     if(!validatedFields.success){
         return NextResponse.json({
-            error:"Invalid Fields!",
+            error:"Invalid Fields!"
+        },{
             status:403
         })
     }
@@ -21,6 +23,8 @@ export async function POST(request:NextRequest){
     if(!existingUser || !existingUser.password || !existingUser.email){
         return NextResponse.json({
             error:"Email does not exist"
+        },{
+            status:400
         })
     }
     if(!existingUser.emailVerified){
@@ -31,6 +35,8 @@ export async function POST(request:NextRequest){
         )
         return NextResponse.json({
             success:"Confirmation email sent"
+        },{
+            status:200
         })
     }
     try{
@@ -45,11 +51,15 @@ export async function POST(request:NextRequest){
                 case "CredentialsSignin":
                     return NextResponse.json({
                         error:"Invalid Credentials",
+                        
+                    },{
                         status:401
                     })
                 default:
                     return NextResponse.json({
                         error:"Something went wrong!!",
+                        
+                    },{
                         status:400
                     })
             }

@@ -13,6 +13,8 @@ export async function POST(request:NextRequest){
     if(!validatedFields.success){
         return NextResponse.json({
             error:"Invalid Fields!",
+            
+        },{
             status:403
         })
     }
@@ -24,6 +26,8 @@ export async function POST(request:NextRequest){
     if(existingUser){
         return NextResponse.json({
             error:"Email already in use",
+            
+        },{
             status:409
         })
     }
@@ -45,12 +49,16 @@ export async function POST(request:NextRequest){
     if(!createdUser){
         return NextResponse.json({
             error:"Something went wrong!!",
+            
+        },{
             status:500
         })
     }
 
     return NextResponse.json({
         success:"Confirmation email sent",
+        
+    },{
         status:200
     })
 }

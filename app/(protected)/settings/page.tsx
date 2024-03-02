@@ -4,7 +4,7 @@ const SettingsPage = async() =>{
     const session = await auth();
 
     return(
-        <div className="h-full flex flex-col items-center justify-center">
+        <div className="h-full flex flex-col items-center justify-center p-52">
             <form action={async()=>{
                 "use server";
                 await signOut();
