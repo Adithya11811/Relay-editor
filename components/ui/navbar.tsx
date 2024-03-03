@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { BiMenuAltRight, BiX } from 'react-icons/bi'
 import { Button } from '@/components/ui/button'
+import { useCurrentUser } from '@/hooks/use-current-user'
 
 type Link = {
   label: string
@@ -11,6 +12,7 @@ type Link = {
 
 
 const Navbar = () => {
+  const user = useCurrentUser();
   const [isMenuActive, setIsMenuActive] = useState(false)
   const [scrolling, setScrolling] = useState(false)
   useEffect(() => {
@@ -32,6 +34,7 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsMenuActive(!isMenuActive)
   }
+    
     return (
     
     <div

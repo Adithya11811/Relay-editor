@@ -7,8 +7,6 @@ import authConfig from "@/auth.config";
 import { getUserById,getAccountByUserId } from "@/data/user";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
-
-
  type ExtendedUser = DefaultSession["user"] & {
   role: UserRole;
   isTwoFactorEnabled: boolean;

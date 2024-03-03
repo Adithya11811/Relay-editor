@@ -34,6 +34,9 @@ model User {
 model Account {
   id                 String  @id @default(cuid())
   userId             String
+  username           String?   @unique
+  // linkedInLink       String?   @unique
+  // githubLink         String?   @unique
   type               String
   provider           String
   providerAccountId  String

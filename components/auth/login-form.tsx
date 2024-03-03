@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { LoginSchema } from "@/schema";
-import { useState, useTransition } from "react";
+import {  useEffect, useState, useTransition } from "react";
 import {
     Form,
     FormControl,
@@ -18,14 +18,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {FormError} from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export const LoginForm = () =>{
-    const router = useRouter();
     const searchParams = useSearchParams();
     const urlError = searchParams.get("error") ==="OAuthAccountNotLinked"?"Email Already use with different provider":"";
+    const session = useSession();
+    const router = useRouter();
+
+    const [showTwoFactor,setShowTwoFactor] = useState(false);
     const [isPending,startTransition] = useTransition();
     const [error,setError] = useState <string | undefined>("");
     const [success,setSuccess] = useState <string | undefined>("");
@@ -36,19 +39,44 @@ export const LoginForm = () =>{
             password: "",
         },
     });
+    useEffect(()=>{
+if(session?.data?.user){
+        router.push("/settings")
+    }
+    },[router,session])
+    
+
+
     const onSubmit = (values: z.infer<typeof LoginSchema>)=>{
         setError("");
         setSuccess("");
         startTransition(()=>{
-            axios.post('/api/auth/login',values).then((data)=>{
-                console.log(data);
-                setSuccess(data.data.success)
-                router.push("/settings");
+            axios.post('/api/auth/login',values).then((response)=>{
+                if(response?.data.error){
+                    form.reset();
+                    setError(response.data.error);
+                }
+                if(response?.data.success && !response?.data.twoFactor){
+                    form.reset();
+                    setSuccess(response.data.success);
+                }
+                if(response?.data.success){
+                    form.reset();
+                    setSuccess(response.data.success);
+                }
+
+                if(response?.data.twoFactor){
+                    setShowTwoFactor(true);
+                }
             }).catch((error)=>{
                 setError(error.response.data.error)
             })
+
+
+            
         })
     }
+
 
 
     return(
@@ -62,6 +90,28 @@ export const LoginForm = () =>{
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6">
                     <div className="space-y-4">
+                    {showTwoFactor&&(
+                         <FormField
+                        control={form.control}
+                        name="code"
+                        render={({field}) => {
+                            return (<FormItem>
+                                <FormLabel>Two Factor Code:</FormLabel>
+                                <FormControl>
+                                    <Input {...field}
+                                        disabled={isPending}
+                                        placeholder="123456"
+                                        type="text" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>);
+                        }}
+                        />
+                    )}
+
+
+                    {!showTwoFactor&&(
+                        <>
                         <FormField
                         control={form.control}
                         name="email"
@@ -103,7 +153,9 @@ export const LoginForm = () =>{
                             </FormItem>);
                         }}
                         />
-
+                    </>
+                    )
+                    }
                     </div>
                     <FormError message={error || urlError}/>
                     <FormSuccess message={success}/>

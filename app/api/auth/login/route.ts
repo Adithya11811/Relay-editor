@@ -3,10 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import {signIn} from "@/auth"
 import { DEFAULT_LOGIN_REDIRECT } from "@/route";
 import { AuthError } from "next-auth";
-import { generateVerificationToken } from "@/lib/tokens";
+import { generateVerificationToken,generateTwoFactorToken } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
-import { sendVerificationEmail } from "@/lib/mail";
-import { m } from "framer-motion";
+import { sendVerificationEmail,sendTwoFactorTokenEmail } from "@/lib/mail";
+import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
+import { db } from "@/lib/db";
 
 export async function POST(request:NextRequest){
     const reqBody = await request.json();
@@ -18,7 +20,7 @@ export async function POST(request:NextRequest){
             status:403
         })
     }
-    const {email,password}=validatedFields.data;
+    const {email,password,code}=validatedFields.data;
     const existingUser = await getUserByEmail(email);
     if(!existingUser || !existingUser.password || !existingUser.email){
         return NextResponse.json({
@@ -39,11 +41,77 @@ export async function POST(request:NextRequest){
             status:200
         })
     }
+
+    if(existingUser.isTwoFactorEnabled && existingUser.email){
+        if(code){
+            const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email)
+            if(!twoFactorToken){
+                return NextResponse.json({
+                    error:"Invalid Code"
+                },{
+                    status:403
+                })
+            }
+            if(twoFactorToken.token!==code){
+                return NextResponse.json({
+                    error:"Invalid token"
+                },{
+                    status:403
+                })
+
+            }
+            const hasExpired = new Date(twoFactorToken.expires) < new Date();
+
+      if (hasExpired) {
+        return NextResponse.json({
+            error:"Token expired"
+        },{
+            status:400
+        })
+      }
+
+      await db.twoFactorToken.delete({
+        where: { id: twoFactorToken.id }
+      });
+
+      const existingConfirmation = await getTwoFactorConfirmationByUserId(
+        existingUser.id
+      );
+
+      if (existingConfirmation) {
+        await db.twoFactorConfirmation.delete({
+          where: { id: existingConfirmation.id }
+        });
+      }
+
+      await db.twoFactorConfirmation.create({
+        data: {
+          userId: existingUser.id,
+        }
+      });
+        }else{
+        const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+        await sendTwoFactorTokenEmail(
+            twoFactorToken.email,
+            twoFactorToken.token
+        )
+        return NextResponse.json({
+            twoFactor:true
+        },{
+            status:200
+        })
+    }
+    }
     try{
         await signIn("credentials",{
             email,
             password,
             redirectTo: DEFAULT_LOGIN_REDIRECT,
+        })
+        return NextResponse.json({
+            success:"Login successful"
+        },{
+            status:205
         })
     }catch(error){
         if(error instanceof AuthError){
