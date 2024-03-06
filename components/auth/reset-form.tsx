@@ -4,7 +4,7 @@ import { CardWrapper } from "@/components/auth/card-wrapper"
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { RegisterSchema } from "@/schema";
+import { ResetSchema } from "@/schema";
 import { useState, useTransition } from "react";
 import {
     Form,
@@ -19,27 +19,27 @@ import { Button } from "@/components/ui/button";
 import {FormError} from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 
-export const RegisterForm = () =>{
+export const ResetForm = () =>{
     const [isPending,startTransition] = useTransition();
     const [error,setError] = useState <string | undefined>("");
     const [success,setSuccess] = useState <string | undefined>("");
-    const form = useForm<z.infer<typeof RegisterSchema>>({
-        resolver:zodResolver(RegisterSchema),
+    const form = useForm<z.infer<typeof ResetSchema>>({
+        resolver:zodResolver(ResetSchema),
         defaultValues:{
             email: "",
-            password: "",
-            name:"",
         },
     });
-    const onSubmit = (values: z.infer<typeof RegisterSchema>)=>{
+    const onSubmit = (values: z.infer<typeof ResetSchema>)=>{
+        console.log(values);
         setError("");
         setSuccess("");
         startTransition(()=>{
-            axios.post('/api/auth/register',values).then((data)=>{
+            axios.post('/api/auth/reset',values).then((data)=>{
                 console.log(data);
                 setSuccess(data.data.success)
+                setError(data.data.error)
             }).catch((error)=>{
-                setError(error.response.data.error)
+                setError(error.response.data.error);
             })
         })
     }
@@ -47,14 +47,14 @@ export const RegisterForm = () =>{
 
     return(
         <CardWrapper 
-        headerLabel="Create an account"
+        headerLabel="Forgot Password?"
         backButtonHref="/auth/login"
-        backButtonLabel="Already have an account?"
-        showSocial >
+        backButtonLabel="Back to login"
+        >
             <Form {...form}>
                 <form 
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-2">
+                className="space-y-6">
                     <div className="space-y-4">
                         <FormField
                         control={form.control}
@@ -72,43 +72,13 @@ export const RegisterForm = () =>{
                             </FormItem>);
                         }}
                         />
-                        <FormField
-                        control={form.control}
-                        name="name"
-                        render={({field}) => {
-                            return (<FormItem>
-                                <FormLabel>Name:</FormLabel>
-                                <FormControl>
-                                    <Input {...field}
-                                        disabled={isPending}
-                                        placeholder="John Doe" 
-                                        type="text"/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>);
-                        }}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="password"
-                        render={({field}) => {
-                            return (<FormItem>
-                                <FormLabel>Password:</FormLabel>
-                                <FormControl>
-                                    <Input {...field}
-                                        disabled={isPending}
-                                        placeholder="*********" 
-                                        type="password"/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>);
-                        }}
-                        />
-                        </div>
+
+                    </div>
                     <FormError message={error}/>
                     <FormSuccess message={success}/>
-                    <Button disabled={isPending} type="submit" className="w-full">
-                        Register
+                    <Button 
+                    disabled={isPending} type="submit" className="w-full">
+                        Send reset email
                     </Button>
                 </form>
             </Form>

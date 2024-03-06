@@ -7,13 +7,12 @@ import authConfig from "@/auth.config";
 import { getUserById,getAccountByUserId } from "@/data/user";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
-
-
  type ExtendedUser = DefaultSession["user"] & {
   role: UserRole;
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
-  email:string ;
+  email:string;
+  name:string;
 };
 
 declare module "next-auth" {
@@ -79,7 +78,7 @@ export const {
       }
 
       if (session.user) {
-        session.user.name = token.name;
+        session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
       }
