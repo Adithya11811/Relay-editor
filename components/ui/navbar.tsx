@@ -43,7 +43,7 @@ const Navbar = () => {
   return (
     <div
       className={`fixed w-screen z-50 bg-transparent bg-blend-saturation transition-colors ${
-        scrolling ? 'bg-custom-color' : 'bg-transparent'
+        scrolling ? 'bg-[#010101]': 'bg-transparent'
       }`}
     >
       <div className="mx-8 flex flex-col py-3 text-lg font-bold text-[#25DF74] sm:mx-8 lg:mx-32">

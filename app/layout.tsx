@@ -27,7 +27,7 @@ export default async function RootLayout({
     <SessionProvider>
     <html lang="en">
       <body className={`${space_mono.className}`}>
-        <Navbar />
+        {/* <Navbar /> */}
         {children}
       </body>
     </html>

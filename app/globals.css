@@ -74,3 +74,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+/*** Works on common browsers ***/
+::selection {
+    background-color: #25df73a8;
+    color: #000000;
+}
+
+/*** Mozilla based browsers ***/
+::-moz-selection {
+    background-color: #25df73a8;
+    color: #fff;
+}
+
+/***For Other Browsers ***/
+::-o-selection {
+    background-color: #25df73a8;
+    color: #fff;
+}
+
+::-ms-selection {
+    background-color: #25df73a8;
+    color: #fff;
+}
+
+/*** For Webkit ***/
+::-webkit-selection {
+    background-color: #25df73a8;
+    color: #fff;
+}
