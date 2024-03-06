@@ -1,23 +1,18 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 enum UserRole {
   ADMIN
-  PERSONAL
-  COMPANY
+  USER
 }
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -25,18 +20,20 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole @default(PERSONAL)
-  accounts      Account[]
+  role          UserRole @default(USER)
+  accounts      Account?
   isTwoFactorEnabled Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 }
 
 model Account {
   id                 String  @id @default(cuid())
-  userId             String
-  username           String?   @unique
-  // linkedInLink       String?   @unique
-  // githubLink         String?   @unique
+  userId             String @unique
+  username           String  @default("")
+  linkedinLink       String?  @default("")
+  githubLink       String? @default("")
+  profileImage     String? @default("")
+  banner           String? @default("")
   type               String
   provider           String
   providerAccountId  String

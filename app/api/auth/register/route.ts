@@ -18,7 +18,7 @@ export async function POST(request:NextRequest){
             status:403
         })
     }
-    const {email,password,name} = validatedFields.data;
+    const {email,password,username} = validatedFields.data;
     const hashedPassword = await bcryptjs.hash(password,10);
 
     const existingUser = await getUserByEmail(email);
@@ -34,7 +34,7 @@ export async function POST(request:NextRequest){
 
     const createdUser = await db.user.create({
         data:{
-            name,
+            username:username,
             email,
             password:hashedPassword
         }

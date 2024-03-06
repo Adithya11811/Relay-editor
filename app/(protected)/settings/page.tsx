@@ -1,4 +1,5 @@
 "use client";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 const SettingsPage = () =>{
     const user = useCurrentUser();
@@ -6,10 +7,10 @@ const SettingsPage = () =>{
 
     return(
         <div className="h-full flex flex-col items-center justify-center p-52">
-            {
-                JSON.stringify(user)
-            }
             
+            <LogoutButton>
+                SignOut
+            </LogoutButton>
         </div>
     )
 }

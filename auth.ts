@@ -12,6 +12,7 @@ import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
   email:string;
+  name:string;
 };
 
 declare module "next-auth" {
@@ -77,7 +78,7 @@ export const {
       }
 
       if (session.user) {
-        session.user.name = token.name;
+        session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
       }
