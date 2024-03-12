@@ -18,28 +18,29 @@ interface CardWrapperProps{
 }
 
 export const CardWrapper = ({
-    children,headerLabel,backButtonHref,backButtonLabel,showSocial
-}:CardWrapperProps)=>{
-    return(
-        <Card className="w-[400px] shadow-md">
-            <CardHeader>
-                <Header label={headerLabel}/>
-            </CardHeader>
-            <CardContent>
-                {children}
-            </CardContent>
-            {showSocial &&
-            (
-                <CardFooter>
-                    <Social/>
-                </CardFooter>
-            )}
-            <CardFooter>
-                <BackButton
-                label={backButtonLabel}
-                href={backButtonHref}
-                />
-            </CardFooter>
-        </Card>
-    )
+  children,
+  headerLabel,
+  backButtonHref,
+  backButtonLabel,
+  showSocial,
+}: CardWrapperProps) => {
+  return (
+    <Card className="w-[400px] shadow-md">
+      <CardHeader>
+        <Header label={headerLabel} />
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+      {showSocial && (
+        <CardFooter>
+          <Social />
+        </CardFooter>
+      )}
+      {/* Conditionally render the CardFooter only if backButtonLabel is not empty */}
+      {backButtonLabel !== '' && (
+        <CardFooter>
+          <BackButton label={backButtonLabel} href={backButtonHref} />
+        </CardFooter>
+      )}
+    </Card>
+  )
 }

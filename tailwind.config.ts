@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import { withUt } from 'uploadthing/tw'
 
 const svgToDataUri = require('mini-svg-data-uri')
 
@@ -7,13 +8,14 @@ const {
   default: flattenColorPalette,
 } = require('tailwindcss/lib/util/flattenColorPalette')
 
-const config = {
+export default withUt ({
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx,mdx}',
   ],
   prefix: '',
   theme: {
@@ -107,9 +109,9 @@ const config = {
       )
     },
   ],
-} satisfies Config
+}) satisfies Config
 
-export default config
+// export default config
 
 function addVariablesForColors({ addBase, theme }: any) {
   let allColors = flattenColorPalette(theme('colors'))

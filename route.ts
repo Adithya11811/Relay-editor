@@ -5,7 +5,8 @@
  */
 export const publicRoutes: string[] = [
   "/",
-  "/auth/new-verification"
+  "/auth/new-verification",
+  "/api/uploadthing"
 ];
 
 /**

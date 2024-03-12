@@ -33,3 +33,17 @@ export const NewPasswordSchema = z.object({
     message: "Minimum of 6 characters are required",
   })
 });
+
+export const CreateAccSchema = z.object({
+  username: z.string().min(1, { message: 'Username is required' }).max(255),
+  linkedinLink: z.string().optional(),
+  githubLink: z
+    .string()
+    .min(20, { message: 'Github Link should be provided' })
+    .max(255),
+  profileImage: z
+    .string().optional(),
+    // .min(1, { message: 'Profile photo is required' })
+    // .max(255),
+  banner: z.string().optional(),
+})

@@ -1,13 +1,13 @@
-
+'use client'
 
 const AuthLayout = ({
     children
 }:{
     children:React.ReactNode
 })=>{
-    return(
+    return (
         <div className="h-screen bg-black flex items-center justify-center">
-            {children}
+          {children}
         </div>
     )
 }
