@@ -7,10 +7,9 @@ import {
   authRoutes,
   publicRoutes,
 } from "@/route";
-
 const { auth } = NextAuth(authConfig);
 
-export const middleware = auth((req) => {
+export const middleware = auth((req):any => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth?.user;
 
@@ -42,6 +41,7 @@ export const middleware = auth((req) => {
       nextUrl
     ));
   }
+  
 
   return null;
 })

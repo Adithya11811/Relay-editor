@@ -2,8 +2,10 @@ import { getVerificatonTokenByEmail } from "@/data/verification-token";
 import { getPasswordResetTokenByEmail } from "@/data/password-reset-token";
 import {v4 as uuidv4} from "uuid";
 import { db } from "./db";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
+import { getUserById } from "@/data/user";
 
 export const generateVerificationToken = async (email: string) =>
 {
@@ -70,4 +72,53 @@ export const generateTwoFactorToken = async(email:string)=>{
         }
     })
     return twoFactorToken;
+}
+
+// Helper functions in separate file (lib/tokens.js)
+export async function createAccessToken(user: { id: any; role: any; }) {
+  // Implement JWT generation with user information (e.g., ID, role)
+  const payload = { userId: user.id, role: user.role };
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY, // Set expiry time in seconds
+  });
+  return accessToken;
+}
+
+
+
+
+export function generateSecureRandomString(length = 32) {
+  // Use cryptographically secure random byte generation
+  const randomBytes = crypto.randomBytes(length);
+
+  // Convert bytes to a base64 URL-safe string (avoids encoding issues)
+  return randomBytes.toString('base64url').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+
+export async function createRefreshToken(user: { id: any; }) {
+  // Implement secure random string generation for refresh token
+  const refreshToken = generateSecureRandomString(); // Replace with secure generation
+  // Store refresh token securely in database (e.g., hashed)
+  const hashedRefreshToken = await bcryptjs.hash(refreshToken, 10);
+  await db.account.update({
+    where: { userId: user.id },
+    data: { refresh_token: hashedRefreshToken },
+  });
+  return refreshToken;
+}
+
+export async function verifyRefreshToken(refreshToken:string) {
+  // Validate and retrieve user ID from refresh token
+  const hashedRefreshToken = await db.account.findFirst({
+    where: { refresh_token: refreshToken }, // Replace with hashed comparison
+  });
+  if (!hashedRefreshToken) return null;
+
+  const isValid = bcryptjs.compare(refreshToken, hashedRefreshToken.refresh_token as string );
+  if (!isValid) return null;
+
+  // Use user ID to fetch user information for further processing
+  const user = await getUserById(hashedRefreshToken.userId);
+  return user;
 }

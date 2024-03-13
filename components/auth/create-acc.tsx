@@ -33,8 +33,11 @@ import type { Crop, PixelCrop } from 'react-image-crop'
 import ReactCrop from 'react-image-crop'
 import { useUploadThing } from '@/utils/uploadthing'
 import Image from 'next/image'
+import { useSearchParams } from "next/navigation";
+
 
 export const CreateACC = () => {
+  const searchParams = useSearchParams();  
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | undefined>('')
   const [success, setSuccess] = useState<string | undefined>('')
@@ -75,6 +78,7 @@ export const CreateACC = () => {
   const form = useForm<z.infer<typeof CreateAccSchema>>({
     resolver: zodResolver(CreateAccSchema),
     defaultValues: {
+      accountId:'',
       username: '',
       githubLink: '',
       linkedinLink: '',
@@ -82,11 +86,13 @@ export const CreateACC = () => {
       banner: '',
     },
   })
-
+  const id = searchParams.get("user");
+  console.log(id)
   const onSubmit = (values: z.infer<typeof CreateAccSchema>) => {
     setError('')
     setSuccess('')
     values['profileImage']=imgUrl;
+    values['accountId'] = id!;
     console.log(values)
     startTransition(() => {
       axios
@@ -206,7 +212,7 @@ export const CreateACC = () => {
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>User Name</FormLabel>
                     <FormControl>
                       <Input
                         {...field}

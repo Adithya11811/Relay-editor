@@ -55,9 +55,19 @@ export async function POST(req:NextRequest){
     if(!isDeleted){
         return ;
     }
+    const createdAccount =await db.account.create({
+        data:{
+            userId:updatedUser.id,
+            provider:"credentials",
+            providerAccountId:"",
+            type:"credentials",
+        }
+    })
 
     return NextResponse.json({
         success:"Verified successfully",
+        account:createdAccount
+    },{
         status:200
     })
 
