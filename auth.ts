@@ -13,7 +13,7 @@ type ExtendedUser = DefaultSession["user"] & {
   isOAuth: boolean;
   email: string;
   name: string;
-  expires:string;
+  expires:number;
   accessToken?: string;
 };
 declare module "next-auth" {
@@ -76,7 +76,7 @@ async session({ token, session }) {
 
       if (session.user) {
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-        session.user.expires = token.expires as string;
+        session.user.expires = token.expires as number;
       }
 
       const account = await getAccountByUserId(session.user.id);

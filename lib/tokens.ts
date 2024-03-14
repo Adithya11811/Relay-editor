@@ -78,7 +78,7 @@ export const generateTwoFactorToken = async(email:string)=>{
 export async function createAccessToken(user: { id: any; role: any; }) {
   // Implement JWT generation with user information (e.g., ID, role)
   const payload = { userId: user.id, role: user.role };
-  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRY, // Set expiry time in seconds
   });
   return accessToken;
