@@ -1,6 +1,7 @@
 import { CreateAccSchema } from '@/schema'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { useCurrentUser } from '@/hooks/use-current-user'
 
 export async function POST(request: NextRequest) {
   const reqBody = await request.json()
@@ -15,15 +16,30 @@ export async function POST(request: NextRequest) {
       }
     )
   }
-  const { username, githubLink, linkedinLink, profileImage, banner } = validatedFields.data
+  console.log(reqBody);
+  const {accountId, username, githubLink, linkedinLink, profileImage, banner } = validatedFields.data
 
-  const createdUser = await db.account.create({
-    data: {
-      githubLink: githubLink,
-      profileImage: profileImage,
-      linkedinLink: linkedinLink,
-      username: username,
-      banner: banner,
-    },
+  const createdUser = await db.account.update({
+    where:{
+      id:accountId
+    },data:{
+      username,
+      githubLink,
+      linkedinLink,
+      profileImage,
+      banner
+    }
+  })
+  if(!createdUser){
+    return NextResponse.json({
+      error:"Something went wrong"
+    },{
+      status:404
+    })
+  }
+  return NextResponse.json({
+    success:"Account created successfully"
+  },{
+    status:200
   })
 }

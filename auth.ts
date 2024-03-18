@@ -7,14 +7,15 @@ import authConfig from "@/auth.config";
 import { getUserById,getAccountByUserId } from "@/data/user";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
- type ExtendedUser = DefaultSession["user"] & {
+type ExtendedUser = DefaultSession["user"] & {
   role: UserRole;
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
-  email:string;
-  name:string;
+  email: string;
+  name: string;
+  expires:number;
+  accessToken?: string;
 };
-
 declare module "next-auth" {
   interface Session {
     user: ExtendedUser;
@@ -64,7 +65,7 @@ export const {
 
       return true;
     },
-    async session({ token, session }) {
+async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -75,12 +76,12 @@ export const {
 
       if (session.user) {
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        session.user.expires = token.expires as number;
       }
 
-      if (session.user) {
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        session.user.isOAuth = token.isOAuth as boolean;
+      const account = await getAccountByUserId(session.user.id);
+      if (account?.access_token) {
+        session.user.accessToken = account.access_token;
       }
 
       return session;
@@ -101,7 +102,7 @@ export const {
       token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-
+      token.expires=existingAccount!.expires_at as unknown as string;
       return token;
     }
   },

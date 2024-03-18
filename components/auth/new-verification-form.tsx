@@ -28,7 +28,7 @@ export const NewVerificationForm =  () => {
             .then((response) => {
                 setSuccess(response.data.success);
                 setError(response.data.error);
-                router.push("/settings")
+                router.push(`/auth/createacc?user=${response.data.account.id}`)
             })
             .catch((error) => {
                 console.error(error);
@@ -43,7 +43,7 @@ export const NewVerificationForm =  () => {
 
     return (
         <CardWrapper
-            headerLabel="Confirming your verification"
+            headerLabel="Verifying your email"
             backButtonHref="/auth/login"
             backButtonLabel="Back to Login"
         >

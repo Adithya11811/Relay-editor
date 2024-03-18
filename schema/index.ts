@@ -35,6 +35,7 @@ export const NewPasswordSchema = z.object({
 });
 
 export const CreateAccSchema = z.object({
+  accountId:z.string(),
   username: z.string().min(1, { message: 'Username is required' }).max(255),
   linkedinLink: z.string().optional(),
   githubLink: z
