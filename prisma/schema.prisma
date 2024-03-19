@@ -12,6 +12,13 @@ enum UserRole {
   ADMIN
   USER
 }
+enum ProjectType {
+  python
+  javascript
+  cpp
+  c
+  java  
+}
 
 model User {
   id                    String                 @id @default(cuid())
@@ -21,9 +28,14 @@ model User {
   image                 String?
   password              String?
   role                  UserRole               @default(USER)
-  accounts              Account?
+
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  accounts              Account?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  
 }
 
 model Account {
@@ -45,8 +57,10 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  projects Project[]
   @@unique([provider, providerAccountId])
 }
 
@@ -84,4 +98,49 @@ model TwoFactorConfirmation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
+}
+
+
+model Project{
+  id String @id @default(cuid())
+  name String  
+  description String?
+  project_type ProjectType 
+  creator String 
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  directory Directory[]
+  projectenv ProjectEnv[]
+  account Account @relation(fields:[creator],references: [id],onDelete: Cascade)
+}
+
+enum FileType {
+  file
+  directory
+}
+model Directory{
+  id String @id @default(cuid())
+  name String 
+  projectId String
+  parent String @unique
+
+  file_type FileType @default(directory)
+  created_at DateTime @default(now())
+  last_modified DateTime @default(now())
+
+
+  directory Directory[] @relation("parentdir")
+  parentDir Directory @relation("parentdir",fields: [parent],references: [parent],onDelete: Cascade)
+  project Project @relation(fields:[projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectEnv{
+  id String @id @default(cuid())
+  key String 
+  value String
+  projectId String
+
+  project Project @relation(fields: [projectId],references: [id],onDelete: Cascade)
+  created_at DateTime @default(now())
 }
