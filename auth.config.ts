@@ -43,7 +43,7 @@ export default {
                 userId: user.id,
                 access_token:access_token,
                 refresh_token:refresh_token,
-                expires_at:parseInt(((Date.now()) + parseInt((process.env.ACCESS_TOKEN_EXPIRY)!))/1000),
+                expires_at:parseInt((Date.now() + parseInt((process.env.ACCESS_TOKEN_EXPIRY)))/1000),
               },
             });
 

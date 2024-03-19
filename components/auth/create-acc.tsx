@@ -33,7 +33,8 @@ import type { Crop, PixelCrop } from 'react-image-crop'
 import ReactCrop from 'react-image-crop'
 import { useUploadThing } from '@/utils/uploadthing'
 import Image from 'next/image'
-import { useSearchParams } from "next/navigation";
+import { useSearchParams,useRouter } from "next/navigation";
+
 
 
 export const CreateACC = () => {
@@ -41,6 +42,7 @@ export const CreateACC = () => {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | undefined>('')
   const [success, setSuccess] = useState<string | undefined>('')
+  const router = useRouter();
   // const [fullname, setfullname] = useState<string | undefined>('')
   // const [fallbackname, setfallbackname] = useState<string | undefined>('')
   const [imgSrc, setImgSrc] = useState('')
@@ -100,6 +102,7 @@ export const CreateACC = () => {
         .then((data) => {
           console.log(data)
           setSuccess(data.data.success)
+          router.push("/settings")
         })
         .catch((error) => {
           setError(error.response.data.error)
