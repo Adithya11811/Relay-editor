@@ -8,11 +8,17 @@ import { FaGithub } from 'react-icons/fa'
 import { FaLinkedin } from 'react-icons/fa'
 import { ChangeEvent } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from '@/components/ui/popover'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
 
 import { useState, useTransition, useRef } from 'react'
 import {
@@ -88,8 +94,9 @@ export const CreateACC = () => {
       banner: '',
     },
   })
+
   const id = searchParams.get("user");
-  console.log(id)
+  // console.log(id)
   const onSubmit = (values: z.infer<typeof CreateAccSchema>) => {
     setError('')
     setSuccess('')
@@ -119,26 +126,27 @@ export const CreateACC = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <div className="space-y-4">
             {/*this is for uploadthing */}
-            <Popover open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={setOpen}>
               <div className="flex flex-col just-fy-center items-center">
-                <PopoverTrigger asChild>
+                <DialogTrigger asChild>
                   <Avatar>
                     {imgUrl && <AvatarImage src={imgUrl} />}
                     <AvatarFallback className="bg-slate-700 scale-3 text-white font-bold text-xl">
                       AV
                     </AvatarFallback>
                   </Avatar>
-                </PopoverTrigger>
+                </DialogTrigger>
               </div>
-              <PopoverContent side="right" sideOffset={40}>
+              <DialogContent className="w-50 flex flex-col justify-center items-center">
                 <FormField
                   control={form.control}
                   name="profileImage"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col justify-center items-center">
                       <FormControl>
                         <Input
                           {...field}
+                          className="w-60"
                           type="file"
                           onChange={(e) => {
                             const file = e.target.files?.[0]
@@ -158,6 +166,7 @@ export const CreateACC = () => {
                           crop={crop}
                           onChange={(_, percent) => setCrop(percent)}
                           onComplete={(c) => setStoredCrop(c)}
+                          className="flex flex-col justify-center items-center"
                         >
                           <Image
                             ref={imageRef}
@@ -168,20 +177,23 @@ export const CreateACC = () => {
                           />
                         </ReactCrop>
                       ) : (
-                        <p>No image selected</p>
+                        <div className="flex flex-col justify-center items-center">
+                          No image selected
+                        </div>
                       )}
 
-                      <button
+                      <Button
                         onClick={() => void uploadImage()}
                         disabled={isUploading}
+                        className="flex flex-col justify-center items-center"
                       >
                         {isUploading ? 'Uploading...' : 'Upload'}
-                      </button>
+                      </Button>
                     </FormItem>
                   )}
                 />
-              </PopoverContent>
-            </Popover>
+              </DialogContent>
+            </Dialog>
             {/* 
             <FormField
               control={form.control}
