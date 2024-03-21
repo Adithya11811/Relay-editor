@@ -2,34 +2,34 @@ import React from "react";
 import { Buffer } from "buffer";
 const OutputWindow = ( outputDetails:any ) => {
   const getOutput = () => {
-    let statusId = outputDetails?.status?.id;
+    let statusId = outputDetails?.outputDetails.status?.id;
 
     if (statusId === 6) {
       // compilation error
       return (
-        <span className="px-2 py-1 font-normal text-xs text-red-500">
-          {atob(outputDetails?.stderr)}
+        <span className="px-2 py-1 font-normal text-md text-red-500">
+          {atob(outputDetails?.outputDetails.stderr)}
         </span>
-      );
+      )
     } else if (statusId === 3) {
       console.log("Should display")
       return (
-        <span className="px-2 py-1 font-normal text-xs text-green-500">
-          {atob(outputDetails.compile_output) !== null
-            ? `${atob(outputDetails.compile_output)}`
+        <span className="px-2 py-1 font-normal text-md text-green-500">
+          {atob(outputDetails.outputDetails.compile_output) !== null
+            ? `${atob(outputDetails.outputDetails.compile_output)}`
             : null}
         </span>
-      );
+      )
     } else if (statusId === 5) {
       return (
-        <span className="px-2 py-1 font-normal text-xs text-red-500">
+        <span className="px-2 py-1 font-normal text-md text-red-500">
           {`Time Limit Exceeded`}
         </span>
       );
     } else {
       return (
-        <span className="px-2 py-1 font-normal text-xs text-red-500">
-          {outputDetails?.stderr}
+        <span className="px-2 py-1 font-normal text-md text-red-500">
+          {outputDetails?.outputDetails.stderr}
         </span>
       );
     }

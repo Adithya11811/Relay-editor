@@ -1,7 +1,6 @@
 import { CreateAccSchema } from '@/schema'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { useCurrentUser } from '@/hooks/use-current-user'
 
 export async function POST(request: NextRequest) {
   const reqBody = await request.json()

@@ -4,6 +4,7 @@ const ResetPage = ()=>{
 
 
     return(
+        
         <ResetForm/>
     )
 }
