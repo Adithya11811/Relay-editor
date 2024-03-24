@@ -1,6 +1,5 @@
 'use client'
 import Profile from '@/components/ui/Profile'
-import { useCurrentUser } from '@/hooks/use-current-user'
 import { AuthProvider } from '@/hooks/AuthProvider'
 
 const Page = () => {

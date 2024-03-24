@@ -1,15 +1,21 @@
 
+import Navbar from '@/components/ui/navbar'
 import Hero from '../components/Hero'
 import CustomCursor from '@/components/ui/customCursor'
-import Langs from '@/components/lang'
+import dynamic from 'next/dynamic'
+// import Langs from '@/components/lang'
+const Responsive = dynamic( () => import('@/components/3d/responsive'),
+  { ssr: false }
+)
+
 
 const page = () => {
   return (
-    <div>
-      {/* <CustomCursor/> */}
+    <>
+      <Navbar/>
       <Hero />
-      <Langs/>
-    </div>
-  )
+      <Responsive/>
+    </>
+  );
 }
 export default page
