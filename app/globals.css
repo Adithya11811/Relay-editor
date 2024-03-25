@@ -74,7 +74,9 @@
     @apply bg-background text-foreground;
   }
 }
-
+/* *{
+  overscroll-behavior: none;
+} */
 /*** Works on common browsers ***/
 ::selection {
     background-color: #25df73a8;

@@ -1,4 +1,3 @@
-// 'use client';
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,8 +28,8 @@ import { getAccountByUserId } from '@/data/user'
 import { AuthProvider } from '@/hooks/AuthProvider'
 import { redirect } from 'next/navigation'
 import { HoverEffect } from './hoverCard'
-import { Dialog, DialogTrigger } from './dialog'
-import { DialogContent } from '@radix-ui/react-dialog'
+import { Dialog, DialogContent, DialogTrigger } from './dialog'
+import { FaPlus } from 'react-icons/fa'
 
 interface ProfileProps {
   id: string
@@ -62,17 +61,18 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
 
-  const fetchAccount = async () => {
-    try {
-      const response = await getAccountByUserId(id) // Await the promise
-      setAccount(response) // Set the account state with the response data
-    } catch (error) {
-      console.error('Error fetching account:', error)
-    }
-  }
+   useEffect(() => {
+     const fetchAccount = async () => {
+       try {
+         const response = await getAccountByUserId(id)
+         setAccount(response)
+       } catch (error) {
+         console.error('Error fetching account:', error)
+       }
+     }
 
-  fetchAccount()
-
+     fetchAccount()
+   }, [id])
   console.log(account)
   return (
     <div className="grid min-h-screen lg:grid-cols-[280px_1fr]">
@@ -95,12 +95,15 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
               >
                 Home
               </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                href="#"
-              >
-                My Profile
-              </Link>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                  <FaPlus />
+                  Create Project
+                </DialogTrigger>
+                <DialogContent className='w-50 flex flex-col justify-center items-center'>
+                  Hello
+                </DialogContent>
+              </Dialog>
               <Link
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                 href="#"
@@ -241,7 +244,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
               </div>
             </div>
           </div>
-          <div className="max-w-5xl mx-auto px-8">
+          <div className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
             <HoverEffect items={projects} />
           </div>
         </main>
