@@ -1,46 +1,43 @@
 import React from "react";
-import { Buffer } from "buffer";
-const OutputWindow = ( outputDetails:any ) => {
-  const getOutput = () => {
-    let statusId = outputDetails?.outputDetails.status?.id;
 
-    if (statusId === 6) {
-      // compilation error
+
+const OutputWindow = ({ outputDetails }: { outputDetails: any }) => {
+  console.log(outputDetails)
+  const getOutput = () => {
+    if (outputDetails?.error) {
+      // Compilation error
       return (
-        <span className="px-2 py-1 font-normal text-md text-red-500">
-          {atob(outputDetails?.outputDetails.stderr)}
+        <span className="px-2 py-1 font-normal text-lg text-red-500">
+          {outputDetails?.error}
         </span>
-      )
-    } else if (statusId === 3) {
-      console.log("Should display")
+      );
+    } else if (outputDetails?.output) {
+      // Output with line breaks
       return (
-        <span className="px-2 py-1 font-normal text-md text-green-500">
-          {atob(outputDetails.outputDetails.compile_output) !== null
-            ? `${atob(outputDetails.outputDetails.compile_output)}`
-            : null}
-        </span>
-      )
-    } else if (statusId === 5) {
-      return (
-        <span className="px-2 py-1 font-normal text-md text-red-500">
-          {`Time Limit Exceeded`}
+        <span
+          className="px-2 py-1 font-normal text-lg text-green-500"
+          style={{ whiteSpace: "pre-wrap" }} // Set white-space property
+        >
+          {outputDetails?.output}
         </span>
       );
     } else {
+      // Default case
       return (
-        <span className="px-2 py-1 font-normal text-md text-red-500">
-          {outputDetails?.outputDetails.stderr}
+        <span className="px-2 py-1 font-normal text-lg text-red-500">
+          {outputDetails?.error}
         </span>
       );
     }
   };
+
   return (
     <>
       <h1 className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
         Output
       </h1>
       <div className="w-full h-56 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-        {outputDetails ? <>{getOutput()}</> : null}
+        {outputDetails ? getOutput() : null}
       </div>
     </>
   );
