@@ -61,7 +61,6 @@ model Account {
   updated_at DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects Project[]
-  @@unique([provider, providerAccountId])
 }
 
 model VerificationToken {

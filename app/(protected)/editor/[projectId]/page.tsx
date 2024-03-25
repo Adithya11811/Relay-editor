@@ -1,19 +1,17 @@
 "use client"
 import {Editor} from "@monaco-editor/react";
 import { SideBar } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+
 
 import { SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 
 import {languageOptions} from "@/constants/languageOptions"
 import LanguagesDropdown from "@/components/project/languageDropdown";
-import { defineTheme } from "@/lib/defineTheme";
-import monacoThemes from "monaco-themes/themes/themelist.json";import {  toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import OutputWindow from "@/components/project/outputWindow";
 import OutputDetails from "@/components/project/outputDetails";
-import { customStyles } from "@/constants/customStyles";
-import Select from "react-select";
+
 
 
 
@@ -22,14 +20,8 @@ const ProjectsPage = ({...props}) =>{
     // const enterPress = useKeyPress("Enter");
     // const ctrlPress = useKeyPress("Control");
     const [outputDetails, setOutputDetails] = useState({
-      compile_output:"",
-      time:0,
-      status:{
-        id:0,
-        description:""
-      },
-      memory:0,
-      stderr:"" 
+      output:"",
+      error:""
     });
     const [processing, setProcessing] = useState(false);
     const [ code,setCode] = useState(props.code || "");
@@ -39,19 +31,6 @@ const ProjectsPage = ({...props}) =>{
         console.log("selected Option...", sl);
         setLanguage(sl);
     };
-
-
-    function handleThemeChange(th: any) {
-        const theme = th;
-        console.log("theme...", theme);
-
-        if (["light", "vs-dark"].includes(theme.value)) {
-            setTheme(theme);
-        } else {
-          defineTheme(theme.value).then((_) => setTheme(theme));
-        }
-    }
-
 
 
   const showSuccessToast = (msg:string) => {
@@ -83,25 +62,18 @@ const ProjectsPage = ({...props}) =>{
       setProcessing(true);
        axios.post("/api/runCode",{code,language:language,customInput:customInput}).
        then((response:any)=>{
-        let status= response.data.data.status;
-        const stdout = response.data.data.stdout
-        const time = response.data.data.time
-        const memory = response.data.data.memory
-        const stderr = response.data.data.stderr
-        const output = {
-          compile_output:stdout,
-          time,
-          memory,
-          status:status,
-          stderr:stderr
-        }
-        setOutputDetails(output)
+        console.log(response)
+        const output = response.data.data.output
+        setOutputDetails({output:output,error:""})
         showSuccessToast(`Compiled Successfully!`)
 
         setProcessing(false)
         return
        }).catch((err)=>{
         console.log(err);
+        const error = err.response.data.error.status.description
+        console.log(error)
+        setOutputDetails({output:"",error:error})
         setProcessing(false);
         showErrorToast(err);
        })
@@ -126,26 +98,11 @@ const ProjectsPage = ({...props}) =>{
         change("code",value);
       }
 
-      const themeOptions =Object.entries(monacoThemes).map(([themeId, themeName]) => ({
-        label: themeName,
-        value: themeId,
-        key: themeId,
-      }))
-
     return(
         <div className="flex flex-col justify-center align-middle">
            <div className="flex flex-row">
            <div className="px-4 py-2">
           <LanguagesDropdown onSelectChange={onSelectChange} />
-        </div>
-         <div className="px-4 py-2">
-          <Select
-                placeholder={`Select Theme`}
-                options={themeOptions}
-                value={theme}
-                styles={customStyles}
-                onChange={handleThemeChange}
-          />
         </div>
             </div>
             
