@@ -9,10 +9,34 @@ import {
 } from '@react-three/postprocessing'
 import { easing } from 'maath'
 import { suspend } from 'suspend-react'
-import { Instances, Computers } from './Computers'
+import dynamic from 'next/dynamic'
+import { useState, useEffect } from 'react';
+// import { Instances, Computers } from './Computer'
 
+// const suzi = import('@pmndrs/assets/models/bunny.glb')
+const Instances = dynamic(() => import('./Computer'), { ssr: false })
+const Computers = dynamic(() => import('./Computer'), { ssr: false })
 
-export default function App() {
+export default function Screens() {
+    // const [Instances, setInstances] = useState(null)
+    // const [Computers, setComputers] = useState(null)
+
+    // useEffect(() => {
+    //   const importModules = async () => {
+    //     const { Instances, Computers } = await import('./Computer')
+    //     setInstances(Instances)
+    //     setComputers(Computers)
+    //   }
+
+    //   importModules()
+    // }, [])
+
+    // if (!Instances || !Computers) {
+    //   // Modules are still loading, you can return a loading indicator here
+    //   return <div>Loading...</div>
+    // // }
+    // console.log(Instances)
+
   return (
     <Canvas
       shadows
@@ -20,6 +44,7 @@ export default function App() {
       camera={{ position: [-1.5, 1, 5.5], fov: 45, near: 1, far: 20 }}
       eventSource={document.getElementById('root')}
       eventPrefix="client"
+      className='h-screen'
     >
       {/* Lights */}
       <color attach="background" args={['black']} />
@@ -36,11 +61,12 @@ export default function App() {
       {/* Main scene */}
       <group position={[-0, -1, 0]}>
         {/* Auto-instanced sketchfab model */}
-        <Instances>
-          <Computers scale={0.5} />
-        </Instances>
+        {/* <Instances> */}
+          {/* <Computers scale={0.5} /> */}
+        {/* </Instances> */}
         {/* Plane reflections + distance blur */}
         <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+            {/* <boxGeometry/> */}
           <planeGeometry args={[50, 50]} />
           <MeshReflectorMaterial
             blur={[300, 30]}
@@ -55,6 +81,12 @@ export default function App() {
             metalness={0.8}
           />
         </mesh>
+        {/* Bunny and a light give it more realism */}
+        {/* <Bun
+          scale={0.4}
+          position={[0, 0.3, 0.5]}
+          rotation={[0, -Math.PI * 0.85, 0]}
+        /> */}
         <pointLight
           distance={1.5}
           intensity={1}
@@ -85,7 +117,15 @@ export default function App() {
   )
 }
 
-
+// function Bun(props) {
+//   const { nodes } = useGLTF(suspend(suzi).default)
+//   console.log(nodes)
+//   return (
+//     <mesh receiveShadow castShadow geometry={nodes.mesh.geometry} {...props}>
+//       <meshStandardMaterial color="#222" roughness={0.5} />
+//     </mesh>
+//   )
+// }
 
 function CameraRig() {
   useFrame((state, delta) => {

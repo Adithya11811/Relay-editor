@@ -1,8 +1,26 @@
 import { cn } from '@/lib/utils'
-import { Dialog, DialogTrigger, DialogContent } from '@radix-ui/react-dialog'
+import { Dialog, DialogTrigger, DialogContent } from './dialog'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { DropdownMenu } from './dropdown-menu'
+import LanguagesDropdown from '../project/languageDropdown'
+import { languageOptions } from '@/constants/languageOptions'
+import { SetStateAction } from 'react'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Button } from './button'
+import { Input } from './input'
+import { useForm } from 'react-hook-form'
+import { ProjectSchema } from '@/schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from "zod";
 
 export const HoverEffect = ({
   items,
@@ -16,7 +34,36 @@ export const HoverEffect = ({
   className?: string
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  
+  const [open, setOpen] = useState<boolean | undefined>(false)
+  // const [flag, setFLag] = useState<boolean | undefined>(false)
+  const [language, setLanguage] = useState(languageOptions[0])
+      const onSelectChange = (
+        sl: SetStateAction<{
+          id: number
+          name: string
+          label: string
+          value: string
+        }>
+      ) => {
+        console.log('selected Option...', sl)
+        setLanguage(sl)
+      }
+
+      const [isPending, startTransition] = useTransition()
+      const [error, setError] = useState<string | undefined>('')
+      const [success, setSuccess] = useState<string | undefined>('')
+      const form = useForm<z.infer<typeof ProjectSchema>>({
+        resolver: zodResolver(ProjectSchema),
+        defaultValues: {
+          lang: '',
+          pname: '',
+          pdescp: '',
+        },
+      })
+      const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
+        values.lang = language.name;
+        console.log(values)
+      }
 
   return (
     <div
@@ -26,13 +73,14 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        
         <div
           key={item?.title}
           className="relative group  block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
+          {/* <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild className="flex items-center gap-3 px-3 py-2 text-gray-500 transition-all hover:text-gray-900"> */}
               <AnimatePresence>
                 {hoveredIndex === idx && (
                   <motion.span
@@ -54,6 +102,63 @@ export const HoverEffect = ({
                 <CardTitle>{item.title}</CardTitle>
                 <CardDescription>{item.description}</CardDescription>
               </HoverCard>
+            {/* </DialogTrigger> */}
+            {/* <DialogContent className="w-50 flex flex-col justify-center items-center"> */}
+              {/* <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-2"
+                >
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="pname"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Project Name:</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={isPending}
+                                placeholder=""
+                                type="text"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="pdescp"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Project description:</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={isPending}
+                                placeholder="Interactive project"
+                                type="text"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  </div>
+                  <Button disabled={isPending} type="submit" className="w-full">
+                    Submit
+                  </Button>
+                </form>
+              </Form> */}
+            {/* </DialogContent> */}
+          {/* </Dialog> */}
         </div>
       ))}
     </div>

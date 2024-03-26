@@ -48,3 +48,9 @@ export const CreateAccSchema = z.object({
     // .max(255),
   banner: z.string().optional(),
 })
+
+export const ProjectSchema = z.object({
+  lang:z.string(),
+  pname:z.string().min(1, { message: 'project name is required' }).max(255),
+  pdescp: z.string(),
+})

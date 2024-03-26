@@ -15,6 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenu,
 } from '@/components/ui/dropdown-menu'
+import { useTransition } from 'react'
 import { useEffect, useState } from 'react'
 import { BellIcon, SettingsIcon } from 'lucide-react'
 import { RiUserFollowFill } from 'react-icons/ri'
@@ -30,6 +31,22 @@ import { redirect } from 'next/navigation'
 import { HoverEffect } from './hoverCard'
 import { Dialog, DialogContent, DialogTrigger } from './dialog'
 import { FaPlus } from 'react-icons/fa'
+import LanguagesDropdown from '../project/languageDropdown'
+import { languageOptions } from '@/constants/languageOptions'
+import { SetStateAction } from 'react'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from './input'
+import { useForm } from 'react-hook-form'
+import { ProjectSchema } from '@/schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 
 interface ProfileProps {
   id: string
@@ -60,20 +77,54 @@ interface account {
 const Profile: React.FC<ProfileProps> = ({ id }) => {
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
+  const [language, setLanguage] = useState(languageOptions[0])
+  const onSelectChange = (
+    sl: SetStateAction<{
+      id: number
+      name: string
+      label: string
+      value: string
+    }>
+  ) => {
+    console.log('selected Option...', sl)
+    setLanguage(sl)
+  }
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const response = await getAccountByUserId(id)
+        setAccount(response)
+      } catch (error) {
+        console.error('Error fetching account:', error)
+      }
+    }
 
-   useEffect(() => {
-     const fetchAccount = async () => {
-       try {
-         const response = await getAccountByUserId(id)
-         setAccount(response)
-       } catch (error) {
-         console.error('Error fetching account:', error)
-       }
-     }
+    fetchAccount()
+  }, [id])
+  const [isPending, startTransition] = useTransition()
+  // const [error, setError] = useState<string | undefined>('')
+  // const [success, setSuccess] = useState<string | undefined>('')
+  const form = useForm<z.infer<typeof ProjectSchema>>({
+    resolver: zodResolver(ProjectSchema),
+    defaultValues: {
+      lang: '',
+      pname: '',
+      pdescp: '',
+    },
+  })
 
-     fetchAccount()
-   }, [id])
+
+  const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
+    values.lang = language.name
+    console.log(values)
+
+
+
+
+  }
   console.log(account)
+
+  
   return (
     <div className="grid min-h-screen lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
@@ -100,8 +151,64 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                   <FaPlus />
                   Create Project
                 </DialogTrigger>
-                <DialogContent className='w-50 flex flex-col justify-center items-center'>
-                  Hello
+                <DialogContent className="w-50 flex flex-col justify-center items-center">
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-2"
+                    >
+                      <LanguagesDropdown onSelectChange={onSelectChange} />
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="pname"
+                          render={({ field }) => {
+                            return (
+                              <FormItem>
+                                <FormLabel>Project Name:</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={isPending}
+                                    placeholder=""
+                                    type="text"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )
+                          }}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="pdescp"
+                          render={({ field }) => {
+                            return (
+                              <FormItem>
+                                <FormLabel>Project description:</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={isPending}
+                                    placeholder="Interactive project"
+                                    type="text"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      </div>
+                      <Button
+                        disabled={isPending}
+                        type="submit"
+                        className="w-full"
+                      >
+                        Submit
+                      </Button>
+                    </form>
+                  </Form>
                 </DialogContent>
               </Dialog>
               <Link
