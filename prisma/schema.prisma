@@ -15,6 +15,7 @@ enum UserRole {
 enum ProjectType {
   python
   javascript
+  typescript
   cpp
   c
   java  
@@ -34,7 +35,6 @@ model User {
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
   accounts              Account?
-
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 
@@ -63,7 +63,6 @@ model Account {
   updated_at DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects Project[]
-  @@unique([provider, providerAccountId])
 }
 
 model VerificationToken {
@@ -104,45 +103,13 @@ model TwoFactorConfirmation {
 
 
 model Project{
-  id String @id @default(cuid())
-  name String  
-  description String?
-  project_type ProjectType 
-  creator String 
+  projectId String @id @default(uuid())
+  projectName String
+  projectDescription String
+  creator String
+  projectURL String
+  projectType ProjectType
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-
-  directory Directory[]
-  projectenv ProjectEnv[]
-  account Account @relation(fields:[creator],references: [id],onDelete: Cascade)
-}
-
-enum FileType {
-  file
-  directory
-}
-model Directory{
-  id String @id @default(cuid())
-  name String 
-  projectId String
-  parent String @unique
-
-  file_type FileType @default(directory)
-  created_at DateTime @default(now())
-  last_modified DateTime @default(now())
-
-
-  directory Directory[] @relation("parentdir")
-  parentDir Directory @relation("parentdir",fields: [parent],references: [parent],onDelete: Cascade)
-  project Project @relation(fields:[projectId], references: [id], onDelete: Cascade)
-}
-
-model ProjectEnv{
-  id String @id @default(cuid())
-  key String 
-  value String
-  projectId String
-
-  project Project @relation(fields: [projectId],references: [id],onDelete: Cascade)
-  created_at DateTime @default(now())
+  account Account @relation(fields: [creator],references: [id],onDelete: Cascade)
 }

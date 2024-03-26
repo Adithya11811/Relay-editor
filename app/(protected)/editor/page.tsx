@@ -11,11 +11,16 @@ import LanguagesDropdown from "@/components/project/languageDropdown";
 import {  toast } from "react-toastify";
 import OutputWindow from "@/components/project/outputWindow";
 import OutputDetails from "@/components/project/outputDetails";
+import { useSearchParams } from "next/navigation";
+
 
 
 
 
 const ProjectsPage = ({...props}) =>{
+    const params = useSearchParams();
+    const projectId = params.get('projectId')
+    console.log(projectId)
     const [customInput, setCustomInput] = useState("");
     // const enterPress = useKeyPress("Enter");
     // const ctrlPress = useKeyPress("Control");
@@ -23,40 +28,50 @@ const ProjectsPage = ({...props}) =>{
       output:"",
       error:""
     });
+    
     const [processing, setProcessing] = useState(false);
-    const [ code,setCode] = useState(props.code || "");
+    const [code,setCode] = useState(props.code || "");
     const [language, setLanguage] = useState(languageOptions[0]);
     const [theme, setTheme] = useState("vs-dark");
+    const [fileName,setFilename] = useState("");
     const onSelectChange = (sl: SetStateAction<{ id: number; name: string; label: string; value: string; }>) => {
         console.log("selected Option...", sl);
         setLanguage(sl);
     };
 
 
-  const showSuccessToast = (msg:string) => {
-    toast.success(msg || `Compiled Successfully!`, {
-      position: "top-right",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+  // const showSuccessToast = (msg:string) => {
+  //   toast.success(msg || `Compiled Successfully!`, {
+  //     position: "top-right",
+  //     autoClose: 1000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
+  // };
 
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg || `Something went wrong! Please try again.`, {
-      position: "top-right",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+  // const showErrorToast = (msg: string) => {
+  //   toast.error(msg || `Something went wrong! Please try again.`, {
+  //     position: "top-right",
+  //     autoClose: 1000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
+  // };
+
+
+    axios.post("/api/getProject",{projectId}).then((response)=>{
+        setFilename(response.data.project.projectName)
+        setCode(response.data.fileContent)
+    }).catch((error)=>{
+      console.log(error)
+    })   
 
     const run = async ()=>{
       setProcessing(true);
@@ -65,7 +80,7 @@ const ProjectsPage = ({...props}) =>{
         console.log(response)
         const output = response.data.data.output
         setOutputDetails({output:output,error:""})
-        showSuccessToast(`Compiled Successfully!`)
+        // showSuccessToast(`Compiled Successfully!`)
 
         setProcessing(false)
         return
@@ -75,7 +90,7 @@ const ProjectsPage = ({...props}) =>{
         console.log(error)
         setOutputDetails({output:"",error:error})
         setProcessing(false);
-        showErrorToast(err);
+        // showErrorToast(err);
        })
     }
 
@@ -107,7 +122,7 @@ const ProjectsPage = ({...props}) =>{
             </div>
             
         <div className="flex flex-row">
-            <SideBar/>
+            <SideBar fileName={fileName}/>
              <div className="overlay rounded-md overflow-hidden w-full h-full shadow-4xl">
                 <Editor
                   height="85vh"

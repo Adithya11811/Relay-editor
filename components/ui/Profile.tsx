@@ -1,13 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-  Card,
-} from '@/components/ui/card'
-import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -17,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useTransition } from 'react'
 import { useEffect, useState } from 'react'
-import { BellIcon, SettingsIcon } from 'lucide-react'
+import { BellIcon, Router, SettingsIcon } from 'lucide-react'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { GrProjects } from 'react-icons/gr'
 import { Avatar, AvatarImage, AvatarFallback } from './avatar'
@@ -27,7 +20,7 @@ import { useCurrentUser } from '@/hooks/use-current-user'
 import { LogoutButton } from '../auth/logout-button'
 import { getAccountByUserId } from '@/data/user'
 import { AuthProvider } from '@/hooks/AuthProvider'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { HoverEffect } from './hoverCard'
 import { Dialog, DialogContent, DialogTrigger } from './dialog'
 import { FaPlus } from 'react-icons/fa'
@@ -47,6 +40,7 @@ import { useForm } from 'react-hook-form'
 import { ProjectSchema } from '@/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import axios from 'axios'
 
 interface ProfileProps {
   id: string
@@ -78,6 +72,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0])
+  const router = useRouter();
   const onSelectChange = (
     sl: SetStateAction<{
       id: number
@@ -110,19 +105,39 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
       lang: '',
       pname: '',
       pdescp: '',
+      extension:'',
+      accountId:''
     },
   })
 
 
   const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
-    values.lang = language.name
+    values.lang = language.value
+    values.accountId = account?.id
     console.log(values)
+    switch(values.lang){
+      case 'python':values.extension = "py";
+        break
+      case 'cpp':values.extension = "cpp";              
+      break
+      case 'c':values.extension = "c";              
+      break
+      case 'javascript':values.extension = "js";              
+      break
+      case 'typescript':values.extension = "ts";              
+      break
+    }
+    
+    axios.post("/api/project",values)
+    .then((response)=>{
+        console.log(response)
+        const projectId = response.data.data.id;
+        router.push(`/editor?projectId=${projectId}`)
+    }).catch((error)=>{
+        console.log(error)
+    })
 
-
-
-
-  }
-  console.log(account)
+ }
 
   
   return (
@@ -158,7 +173,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                       className="space-y-2"
                     >
                       <LanguagesDropdown onSelectChange={onSelectChange} />
-                      <div className="space-y-4">
+                      <div className=" space-y-6 m-2">
                         <FormField
                           control={form.control}
                           name="pname"

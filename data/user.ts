@@ -27,7 +27,6 @@ export const getAccountByUserId = async (userId: string) => {
     const account = await db.account.findFirst({
       where: { userId:userId }
     });
-    console.log(account);
     return account;
   } catch(e) {
     return e;
