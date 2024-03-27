@@ -58,7 +58,7 @@ export async function POST(req:NextRequest){
     const createdAccount =await db.account.create({
         data:{
             userId:updatedUser.id,
-            provider:"credentials",
+            provider:"",
             providerAccountId:"",
             type:"credentials",
         }

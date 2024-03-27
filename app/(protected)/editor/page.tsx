@@ -69,11 +69,6 @@ useEffect(()=>{
   return (
     <div className="flex flex-col justify-center align-middle">
       <div className="flex flex-row">
-        <div className="px-4 py-2">
-          <LanguagesDropdown onSelectChange={onSelectChange} />
-        </div>
-      </div>
-      <div className="flex flex-row">
         <SideBar fileName={fileName} />
         <div className="overlay rounded-md overflow-hidden w-full h-full shadow-4xl">
           <Editor
