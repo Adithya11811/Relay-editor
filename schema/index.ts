@@ -53,4 +53,6 @@ export const ProjectSchema = z.object({
   lang:z.string(),
   pname:z.string().min(1, { message: 'project name is required' }).max(255),
   pdescp: z.string(),
+  extension:z.string(),
+  accountId:z.string()
 })

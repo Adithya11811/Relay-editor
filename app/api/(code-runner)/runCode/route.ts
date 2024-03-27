@@ -98,8 +98,7 @@ export async function POST(request: NextRequest) {
         const lines = output.split('\n');
         const errorMessages = lines.filter(line => line.toLowerCase().includes('error'));
         let standardOutput = lines.filter(line => !line.toLowerCase().includes('error')).join('\n');
-        if(language==="javascript")
-            standardOutput = removeAnsiEscapeSequences(standardOutput);
+        standardOutput = removeAnsiEscapeSequences(standardOutput);
         // Stop and remove the container
         await container.remove();
 
