@@ -33,14 +33,14 @@ const OutputWindow = ({ outputDetails }: { outputDetails: any }) => {
 
   return (
     <>
-      <h1 className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
+      {/* <h1 className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2">
         Output
-      </h1>
-      <div className="w-full h-56 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto">
-        {outputDetails ? getOutput() : null}
+      </h1> */}
+      <div className="w-full h-full bg-gray-800/40 hover:border hover:border-green-600 px-4 text-white font-normal text-md overflow-y-auto">
+        <span className="text-slate-600 hover:underline text-md cursor-default">Output window</span>{outputDetails ? getOutput() : null}
       </div>
     </>
-  );
+  )
 };
 
 export default OutputWindow;

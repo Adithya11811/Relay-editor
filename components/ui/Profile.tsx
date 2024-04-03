@@ -24,6 +24,9 @@ import { redirect, useRouter } from 'next/navigation'
 import { HoverEffect } from './hoverCard'
 import { Dialog, DialogContent, DialogTrigger } from './dialog'
 import { FaPlus } from 'react-icons/fa'
+import { IoIosNotifications } from 'react-icons/io'
+import { FaLinkedinIn } from 'react-icons/fa'
+import { FaGithub } from 'react-icons/fa'
 import LanguagesDropdown from '../project/languageDropdown'
 import { languageOptions } from '@/constants/languageOptions'
 import { SetStateAction } from 'react'
@@ -41,6 +44,7 @@ import { ProjectSchema } from '@/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import axios from 'axios'
+import Header from './BHeader'
 
 interface ProfileProps {
   id: string
@@ -72,7 +76,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0])
-  const router = useRouter();
+  const router = useRouter()
   const onSelectChange = (
     sl: SetStateAction<{
       id: number
@@ -105,64 +109,72 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
       lang: '',
       pname: '',
       pdescp: '',
-      extension:'',
-      accountId:''
+      extension: '',
+      accountId: '',
     },
   })
-
 
   const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
     values.lang = language.value
     values.accountId = account?.id
     console.log(values)
-    switch(values.lang){
-      case 'python':values.extension = "py";
+    switch (values.lang) {
+      case 'python':
+        values.extension = 'py'
         break
-      case 'cpp':values.extension = "cpp";              
-      break
-      case 'c':values.extension = "c";              
-      break
-      case 'javascript':values.extension = "js";              
-      break
-      case 'typescript':values.extension = "ts";              
-      break
+      case 'cpp':
+        values.extension = 'cpp'
+        break
+      case 'c':
+        values.extension = 'c'
+        break
+      case 'javascript':
+        values.extension = 'js'
+        break
+      case 'typescript':
+        values.extension = 'ts'
+        break
     }
-    
-    axios.post("/api/project",values)
-    .then((response)=>{
+
+    axios
+      .post('/api/project', values)
+      .then((response) => {
         console.log(response)
-        const projectId = response.data.data.id;
+        const projectId = response.data.data.id
         router.push(`/editor?projectId=${projectId}`)
-    }).catch((error)=>{
+      })
+      .catch((error) => {
         console.log(error)
-    })
+      })
+  }
 
- }
-
-  
   return (
-    <div className="grid min-h-screen lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-[60px] items-center border-b px-6">
+    <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
+      <div className="hidden  lg:block bg-gray-800/40">
+        <div className="flex h-full max-h-screen flex-col">
+          <div className="flex h-[60px] items-center  px-6">
             <Link className="flex items-center gap-2 font-semibold" href="#">
-              <span className="">Relay</span>
+              <span className="text-xl">Relay</span>
             </Link>
-            <Button className="ml-auto h-8 w-8" size="icon" variant="outline">
-              <BellIcon />
+            <Button
+              className="ml-auto h-10 w-10 rounded-full "
+              size="icon"
+              variant="ghost"
+            >
+              <IoIosNotifications size={30} />
               <span className="sr-only">Toggle notifications</span>
             </Button>
           </div>
-          <div className="flex-1 overflow-auto py-2">
-            <nav className="grid items-start px-4 text-sm font-medium">
+          <div className="flex-1 overflow-clip py-2">
+            <nav className="grid items-start pl-4 text-sm font-medium">
               <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="flex items-center gap-3 rounded-lg  py-2  transition-all  text-gray-400 hover:text-gray-50"
                 href="#"
               >
                 Home
               </Link>
               <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                <DialogTrigger className="flex items-center gap-3 rounded-lg py-2 transition-all  text-gray-400 hover:text-gray-50">
                   <FaPlus />
                   Create Project
                 </DialogTrigger>
@@ -227,7 +239,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                 </DialogContent>
               </Dialog>
               <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
                 href="#"
               >
                 <GrProjects />
@@ -235,14 +247,14 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
               </Link>
 
               <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
                 href="#"
               >
                 <RiUserFollowFill />
                 Follow
               </Link>
               <Link
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
                 href="#"
               >
                 <SettingsIcon className="h-4 w-4" />
@@ -268,108 +280,122 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
           </div> */}
         </div>
       </div>
+
       <div className="flex flex-col">
-        <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
-          <Link
-            className="lg:hidden flex items-center gap-2 font-semibold"
-            href="#"
-          >
-            <span className="">Relay Editor</span>
-          </Link>
-          <nav className="hidden lg:flex lg:flex-1 lg:gap-4 lg:justify-center lg:text-sm">
-            <Link
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
-            >
-              Home
-            </Link>
-            <Link
-              className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-900  transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
-              href="#"
-            >
-              My Profile
-            </Link>
-            <Link
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
-            >
-              Settings
-            </Link>
-          </nav>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="rounded-full border border-gray-200 w-8 h-8 dark:border-gray-800"
-                id="user-menu"
-                size="icon"
-                variant="ghost"
-              >
-                <Image
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="32"
-                  src={account?.profileImage || '/placeholder.svg'}
-                  style={{
-                    aspectRatio: '32/32',
-                    objectFit: 'cover',
-                  }}
-                  width="32"
-                />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <LogoutButton>Logout</LogoutButton>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-          <div className="grid items-start justify-center gap-4">
-            <div className="flex items-center justify-center gap-2 md:gap-4">
-              <div className="flex flex-col justify-center items-center gap-2 md:gap-4">
-                <Image
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="150"
-                  src={account?.profileImage || '/placeholder.svg'}
-                  style={{
-                    aspectRatio: '150/150',
-                    objectFit: 'cover',
-                  }}
-                  width="150"
-                />
-                <div className="grid items-center gap-1 text-center md:flex md:gap-1 md:text-left">
-                  <h1 className="text-lg font-bold">{account?.username}</h1>
-                  {/* <Button className="rounded-full" size="icon">
+        <Header imgUrl={account?.profileImage} />
+        <div className="w-full  bg-grid-white/[0.2] relative flex items-center justify-center">
+          {/* Radial gradient for the container to give a faded look */}
+          <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black)]"></div>
+          <div className="relative bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-green-600">
+            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+              <div className="grid items-start justify-center gap-4">
+                <div className="flex items-center justify-center gap-2 md:gap-4">
+                  <div className="flex flex-col justify-center items-center gap-2 md:gap-4">
+                    <Image
+                      alt="Avatar"
+                      className="rounded-full"
+                      height="150"
+                      src={account?.profileImage || '/placeholder.svg'}
+                      style={{
+                        aspectRatio: '150/150',
+                        objectFit: 'cover',
+                      }}
+                      width="150"
+                    />
+                    <div className="grid items-center gap-1 text-center md:flex md:gap-1 md:text-left">
+                      <h1 className="text-xl font-medium">
+                        @{account?.username}
+                      </h1>
+                      {/* <Button className="rounded-full" size="icon">
                   <span className="sr-only">Edit</span>
                 </Button> */}
+                    </div>
+                    <div className="flex gap-5 items-center">
+                      <p className="text-xl ml-3 text-gray-500 dark:text-gray-400">
+                        <Link href="#">
+                          <FaLinkedinIn size={30} />
+                        </Link>
+                      </p>
+                      <p className="text-xl text-gray-500 dark:text-gray-400">
+                        <Link href="#">
+                          <FaGithub size={30} />
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col mb-12 ml-4 gap-5 items-center">
-                <p className="text-xl text-gray-500 dark:text-gray-400">
-                  <Link href="#">
-                    <LinkedInLogoIcon />
-                  </Link>
-                </p>
-                <p className="text-xl text-gray-500 dark:text-gray-400">
-                  <Link href="#">
-                    <GitHubLogoIcon />
-                  </Link>
-                </p>
+              <div className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <DialogTrigger className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
+                    <HoverEffect items={projects} />
+                  </DialogTrigger>
+                  <DialogContent className="w-50 flex flex-col justify-center items-center">
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-2"
+                      >
+                        <LanguagesDropdown onSelectChange={onSelectChange} />
+                        <div className=" space-y-6 m-2">
+                          <FormField
+                            control={form.control}
+                            name="pname"
+                            render={({ field }) => {
+                              return (
+                                <FormItem>
+                                  <FormLabel className='text-black'>Project Name:</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      disabled={isPending}
+                                      placeholder=""
+                                      type="text"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )
+                            }}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="pdescp"
+                            render={({ field }) => {
+                              return (
+                                <FormItem>
+                                  <FormLabel className="text-black">
+                                    Project description:
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      disabled={isPending}
+                                      placeholder="Interactive project"
+                                      type="text"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        </div>
+                        <Button
+                          disabled={isPending}
+                          type="submit"
+                          className="w-full"
+                        >
+                          Submit
+                        </Button>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
               </div>
-            </div>
+            </main>
           </div>
-          <div className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
-            <HoverEffect items={projects} />
-          </div>
-        </main>
+        </div>
       </div>
     </div>
   )

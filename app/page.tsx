@@ -10,7 +10,7 @@ import Footer from '@/components/ui/footer';
 const page = () => {
   return (
     <div className='bg-black'>
-      {/* <Navbar/> */}
+      <Navbar/>
       <Hero />
       <Enter/>
       <HorizontalScrollCarousel/>

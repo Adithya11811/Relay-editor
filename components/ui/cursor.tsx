@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import Link from 'next/link';
 
 export default function BlurryCursor(): JSX.Element {
-    const mouse = useRef<{ x: number; y: number }>({ x: 50, y: 50 });
+    const mouse = useRef<{ x: number; y: number }>({ x: 75, y: 75 });
     const button = useRef<HTMLButtonElement>(null);
 
     const manageMouseMove = (e: MouseEvent): void => {
@@ -34,7 +34,7 @@ export default function BlurryCursor(): JSX.Element {
         <Link href="/auth/register">
           <button
             ref={button}
-            className="top-0 left-0 fixed bg-green-500 text-white rounded-full px-4 py-6 z-10"
+            className="top-0 left-0 fixed bg-green-500 text-white rounded-full px-4 py-6 z-10 mix-blend-luminosity		"
           >
             Get
             <br />

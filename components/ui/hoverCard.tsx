@@ -68,7 +68,7 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  py-5',
+        'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 lg:w-2/3',
         className
       )}
     >
@@ -81,30 +81,30 @@ export const HoverEffect = ({
         >
           {/* <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild className="flex items-center gap-3 px-3 py-2 text-gray-500 transition-all hover:text-gray-900"> */}
-              <AnimatePresence>
-                {hoveredIndex === idx && (
-                  <motion.span
-                    className="absolute inset-0 h-full w-full bg-neutral-200 block  rounded-3xl"
-                    layoutId="hoverBackground"
-                    initial={{ opacity: 0 }}
-                    animate={{
-                      opacity: 1,
-                      transition: { duration: 0.15 },
-                    }}
-                    exit={{
-                      opacity: 0,
-                      transition: { duration: 0.15, delay: 0.2 },
-                    }}
-                  />
-                )}
-              </AnimatePresence>
-              <HoverCard>
-                <CardTitle>{item.title}</CardTitle>
-                <CardDescription>{item.description}</CardDescription>
-              </HoverCard>
-            {/* </DialogTrigger> */}
-            {/* <DialogContent className="w-50 flex flex-col justify-center items-center"> */}
-              {/* <Form {...form}>
+          <AnimatePresence>
+            {hoveredIndex === idx && (
+              <motion.span
+                className="absolute inset-0 h-full w-full bg-slate-700 text-green-600 block  rounded-3xl"
+                layoutId="hoverBackground"
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                  transition: { duration: 0.15 },
+                }}
+                exit={{
+                  opacity: 0,
+                  transition: { duration: 0.15, delay: 0.2 },
+                }}
+              />
+            )}
+          </AnimatePresence>
+          <HoverCard>
+            <CardTitle>{item.title}</CardTitle>
+            <CardDescription>{item.description}</CardDescription>
+          </HoverCard>
+          {/* </DialogTrigger> */}
+          {/* <DialogContent className="w-50 flex flex-col justify-center items-center"> */}
+          {/* <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-2"
@@ -157,7 +157,7 @@ export const HoverEffect = ({
                   </Button>
                 </form>
               </Form> */}
-            {/* </DialogContent> */}
+          {/* </DialogContent> */}
           {/* </Dialog> */}
         </div>
       ))}
@@ -175,12 +175,12 @@ export const HoverCard = ({
   return (
     <div
       className={cn(
-        'rounded-2xl h-full w-full overflow-hidden bg-slate-700 border border-black dark:border-white/[0.2] group-hover:border-slate-300 relative z-20',
+        'rounded-2xl h-full w-full  overflow-hidden bg-gray-800/40 border  border-white/[0.2] relative z-20',
         className
       )}
     >
       <div className="relative z-50">
-        <div className="p-4">{children}</div>
+        <div className="p-4 hover:text-black">{children}</div>
       </div>
     </div>
   )
@@ -193,7 +193,7 @@ export const CardTitle = ({
   children: React.ReactNode
 }) => {
   return (
-    <h4 className={cn('text-zinc-100 font-bold tracking-wide', className)}>
+    <h4 className={cn('text-zinc-100 font-bold tracking-tight', className)}>
       {children}
     </h4>
   )
