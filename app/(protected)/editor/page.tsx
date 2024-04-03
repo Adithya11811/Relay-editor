@@ -11,9 +11,27 @@ import OutputWindow from "@/components/project/outputWindow";
 import OutputDetails from "@/components/project/outputDetails";
 import { useSearchParams } from "next/navigation";
 import * as monaco from 'monaco-editor'
-import Header from "@/components/ui/BHeader";
+// import Header from "@/components/ui/EHeader";
 import { AuthProvider } from "@/hooks/AuthProvider";
 import { getAccountByUserId } from "@/data/user";
+import Link from 'next/link'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui//button'
+import Image from 'next/image'
+import { LogoutButton } from "@/components/auth/logout-button";
+import { ArrowLeft } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 const ProjectsPage = () => {
   const params = useSearchParams();
@@ -91,10 +109,83 @@ useEffect(()=>{
   return (
     <div className="flex flex-col justify-center align-middle">
       <div className="h-[10vh]">
-        <Header imgUrl={account?.profileImage} />
+        <header className="flex h-14 lg:h-[60px] items-center gap-4 px-6 bg-gray-800/40">
+          <nav className="hidden lg:flex lg:flex-1 lg:gap-4 lg:justify-start lg:text-sm">
+            <Link
+              className="flex items-center gap-5 font-semibold"
+              href="/profile"
+            >
+              <span className="">Relay</span>
+            </Link>
+            <Button
+              variant={'link'}
+              className="rounded-lg px-3 hover:scale-110 lg:mx-24 py-2 flex items-center gap-2 border-slate-700 border transition-all text-gray-400 hover:text-gray-50"
+            >
+              <Link
+                className="flex items-center gap-2 justify-center  transition-all text-gray-400 hover:text-gray-50"
+                href="/profile"
+              >
+                <ArrowLeft size={20} strokeWidth={0.5} />
+                back
+              </Link>
+            </Button>
+            <Button
+              onClick={run}
+              disabled={!code}
+              className="rounded-lg px-4 hover:scale-110 lg:mx-40 py-1 flex items-center gap-2 bg-green-600 hover:bg-green-600 transition-all text- white hover:text-white"
+            >
+              {processing ? 'Processing...' : 'Run'}
+            </Button>
+            <Popover>
+              <PopoverTrigger className="lg:-mx-32">
+                <Button
+                  variant={'link'}
+                  className="border bg-transparent border-slate-700 text-gray-400 hover:text-gray-50"
+                >
+                  Performance
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>Hello</PopoverContent>
+            </Popover>
+          </nav>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="rounded-full border-2 border-green-600 w-8 h-8 dark:border-gray-800"
+                id="user-menu"
+                size="icon"
+                variant="ghost"
+              >
+                <Image
+                  alt="Avatar"
+                  className="rounded-full"
+                  height="32"
+                  src={account?.profileImage || '/hsec1.jpg'}
+                  style={{
+                    aspectRatio: '32/32',
+                    objectFit: 'cover',
+                  }}
+                  width="32"
+                />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LogoutButton>Logout</LogoutButton>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </header>
+        {/* <Header imgUrl={account?.profileImage} /> */}
       </div>
       <div className="flex flex-row justify-end">
-        <SideBar fileName={fileName} />
+        <SideBar fileName={fileName} accountid={account?.id} />
         <div className="overlay overflow-clip w-full h-full bg-[#2a2828]">
           <Editor
             height="90vh"
@@ -104,7 +195,7 @@ useEffect(()=>{
             theme={'vs-dark'}
             options={{
               minimap: {
-                enabled: true,
+                enabled: false,
               },
               fontSize: 18,
               // cursorStyle: 'block',
@@ -118,17 +209,15 @@ useEffect(()=>{
         </div>
         <div className="right-container flex flex-shrink-0 w-[30%] flex-col">
           <OutputWindow outputDetails={outputDetails} />
-          <div className="flex flex-col items-end">
-
-            {/* <button
+          {/* <div className="flex flex-col items-end">
+            <Button
               onClick={run}
               disabled={!code}
               className="mt-4 border-2 border-black z-10 rounded-md shadow-[5px_5px_0px_0px_rgba(0,0,0)] px-4 py-2 hover:shadow transition duration-200 bg-white flex-shrink-0"
             >
               {processing ? 'Processing...' : 'Compile and Execute'}
-            </button> */}
-          </div>
-         
+            </Button>
+          </div> */}
         </div>
       </div>
     </div>

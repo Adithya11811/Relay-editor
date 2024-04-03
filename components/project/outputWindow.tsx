@@ -37,7 +37,10 @@ const OutputWindow = ({ outputDetails }: { outputDetails: any }) => {
         Output
       </h1> */}
       <div className="w-full h-full bg-gray-800/40 hover:border hover:border-green-600 px-4 text-white font-normal text-md overflow-y-auto">
-        <span className="text-slate-600 hover:underline text-md cursor-default">Output window</span>{outputDetails ? getOutput() : null}
+        <span className="text-slate-600 hover:underline text-md cursor-default">
+          Output window
+        </span>
+        <div>{outputDetails ? getOutput() : null}</div>
       </div>
     </>
   )
