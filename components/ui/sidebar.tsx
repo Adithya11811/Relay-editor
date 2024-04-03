@@ -23,17 +23,23 @@ export const SideBar = ({ ...props }) => {
     const [open, setOpen] = useState<boolean | undefined>(false)
     const [language, setLanguage] = useState(languageOptions[0])
     const router = useRouter()
-    const onSelectChange = (
-      sl: SetStateAction<{
-        id: number
-        name: string
-        label: string
-        value: string
-      }>
-    ) => {
-      console.log('selected Option...', sl)
-      setLanguage(sl)
-    }
+    const files = props.files
+    const project = props.project
+    const directories = props.directories
+    // console.log(files)
+    console.log(project?.projectName)
+    // console.log(directories)
+    // const onSelectChange = (
+    //   sl: SetStateAction<{
+    //     id: number
+    //     name: string
+    //     label: string
+    //     value: string
+    //   }>
+    // ) => {
+    //   console.log('selected Option...', sl)
+    //   setLanguage(sl)
+    // }
 
     const [isPending, startTransition] = useTransition()
     // const [error, setError] = useState<string | undefined>('')
@@ -84,8 +90,8 @@ export const SideBar = ({ ...props }) => {
     }
   return (
     <div className="hover:border hover:border-green-600 p-2 bg-gray-800/40 text-md w-72">
-      <div className="flex justify-evenly">
-        <div className='text-white'>{props.fileName}</div>
+      <div className="flex mx-2 flex-col justify-start items-start">
+        <div className='text-white'>{project?.projectName}</div>
         {/* <div>
           {' '}
           <Dialog open={open} onOpenChange={setOpen}>
@@ -149,6 +155,7 @@ export const SideBar = ({ ...props }) => {
             </DialogContent>
           </Dialog>
         </div> */}
+        
       </div>
     </div>
   )

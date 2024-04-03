@@ -12,10 +12,10 @@ const requestCounts = new Map();
 export async function POST(request: NextRequest) {
     let { code, language } = await request.json();
     const docker = new Dockerode();
-
+    console.log(language)
     try {
         // Check if the IP address has exceeded the rate limit
-        const clientIP = request?.remoteAddr!;
+        const clientIP = request?.remoteAddr;
         const currentTimestamp = Date.now();
         const windowStart = currentTimestamp - RATE_LIMIT_WINDOW_MS;
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         let command;
 
         // Determine Docker image and command based on language
-        switch (language.value) {
+        switch (language) {
             case 'python':
                 image = 'python:latest';
                 command = ['python', '-c', code];
@@ -58,15 +58,14 @@ export async function POST(request: NextRequest) {
                 console.log(command)
                 break;
            case 'cpp':
-                case 'cpp':
-    code = removeCommentsCpp(code);
-    image = 'gcc:latest';
-    command = [
-        'bash',
-        '-c',
-        `echo '${code.replace(/'/g, "\\'")}' > /tmp/code.cpp && g++ /tmp/code.cpp -o /tmp/code && /tmp/code`
-    ];
-    break;
+                code = removeCommentsCpp(code);
+                image = 'gcc:latest';
+                command = [
+                    'bash',
+                    '-c',
+                    `echo '${code.replace(/'/g, "\\'")}' > /tmp/code.cpp && g++ /tmp/code.cpp -o /tmp/code && /tmp/code`
+                ];
+             break;
 
             default:
                 return NextResponse.json({ error: "Unsupported language" }, { status: 400 });

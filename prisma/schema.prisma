@@ -12,15 +12,15 @@ enum UserRole {
   ADMIN
   USER
 }
+
 enum ProjectType {
   python
   javascript
   typescript
   cpp
   c
-  java  
+  java
 }
-
 
 model User {
   id                    String                 @id @default(cuid())
@@ -30,14 +30,11 @@ model User {
   image                 String?
   password              String?
   role                  UserRole               @default(USER)
-
-
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
-  accounts              Account?
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-
+  created_at            DateTime               @default(now())
+  updated_at            DateTime               @default(now())
+  accounts              Account[]
 }
 
 model Account {
@@ -58,12 +55,10 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projects Project[]
-  @@unique([provider,providerAccountId])
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now())
+  projects          Project[]               // Adjust the relationship
+  user              User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -102,15 +97,34 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
+model Project {
+  projectId           String       @id @default(uuid())
+  projectName         String
+  projectDescription  String
+  projectType         ProjectType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+  creator             String       // Adjust the field
+  account             Account      @relation(fields: [creator], references: [id], onDelete: Cascade)
+  directories         Directory[]
+}
 
-model Project{
-  projectId String @id @default(uuid())
-  projectName String
-  projectDescription String
-  creator String
-  projectURL String
-  projectType ProjectType
+model Directory{
+  id String @id @default(uuid())
+  name String
+  projectId String 
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  account Account @relation(fields: [creator],references: [id],onDelete: Cascade)
+  project Project @relation(references: [projectId], fields: [projectId],onDelete: Cascade)
+  parent String
+  files Files[]
+}
+model Files{
+  id String @id @default(uuid())
+  name String
+  belongs_to String
+  fileUrl String
+  directory Directory @relation(references: [id], fields: [belongs_to],onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 }

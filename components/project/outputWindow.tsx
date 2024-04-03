@@ -2,8 +2,7 @@ import React from "react";
 
 
 const OutputWindow = ({ outputDetails }: { outputDetails: any }) => {
-  console.log(outputDetails)
-  const getOutput = () => {
+    const getOutput = () => {
     if (outputDetails?.error) {
       // Compilation error
       return (

@@ -136,16 +136,14 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
         break
     }
 
-    axios
-      .post('/api/project', values)
-      .then((response) => {
+    axios.post("/api/project",values)
+    .then((response)=>{
         console.log(response)
-        const projectId = response.data.data.id
+        const projectId = response.data.project.projectId;
         router.push(`/editor?projectId=${projectId}`)
-      })
-      .catch((error) => {
+    }).catch((error)=>{
         console.log(error)
-      })
+    })
   }
 
   return (
@@ -178,11 +176,11 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                   <FaPlus />
                   Create Project
                 </DialogTrigger>
-                <DialogContent className="w-50 flex flex-col justify-center items-center">
+                <DialogContent className="w-50 flex flex-col justify-center items-center text-black">
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-2"
+                      className="space-y-2 text-black"
                     >
                       <LanguagesDropdown onSelectChange={onSelectChange} />
                       <div className=" space-y-6 m-2">

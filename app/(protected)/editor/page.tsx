@@ -1,14 +1,10 @@
 "use client"
-import { Editor } from "@monaco-editor/react";
+import { Editor, useMonaco } from "@monaco-editor/react";
 import { SideBar } from "@/components/ui/sidebar";
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { languageOptions } from "@/constants/languageOptions";
-import { cusTheme } from "@/constants/customTheme";
-import LanguagesDropdown from "@/components/project/languageDropdown";
-import { toast } from "react-toastify";
 import OutputWindow from "@/components/project/outputWindow";
-import OutputDetails from "@/components/project/outputDetails";
 import { useSearchParams } from "next/navigation";
 import * as monaco from 'monaco-editor'
 // import Header from "@/components/ui/EHeader";
@@ -35,6 +31,7 @@ import {
 
 const ProjectsPage = () => {
   const params = useSearchParams();
+  const monaco = useMonaco();
   const projectId = params.get('projectId');
   console.log(projectId);
   const [account, setAccount] = useState<unknown>(null)
@@ -60,19 +57,33 @@ const ProjectsPage = () => {
   });
   const [processing, setProcessing] = useState(false);
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState(languageOptions[0]);
+  const [language, setLanguage] = useState("");
   const [fileName, setFilename] = useState("");
+  const [project, setProject] = useState(null);
+  const [directories, setDirectories] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [fileContent, setFileContent] = useState("");
 
 
-  const onSelectChange = (sl: SetStateAction<{ id: number; name: string; label: string; value: string; }>) => {
-    console.log("selected Option...", sl);
-    setLanguage(sl);
-  };
+
+  useEffect(() => {
+    // Load and apply the theme
+    import("monaco-themes/themes/Dracula.json")
+      .then(themeData => {
+        monaco?.editor.defineTheme("dracula", themeData);
+        monaco?.editor.setTheme("dracula");
+      })
+      .catch(error => {
+        console.error("Failed to load Monaco theme:", error);
+      });
+  }, [monaco]);
 
   useEffect(() => {
     axios.post("/api/getProject", { projectId }).then((response) => {
-      setFilename(response.data.project.projectName);
-      setCode(response.data.fileContent);
+      setFiles(response.data.files);
+      setProject(response.data.project);
+      setDirectories(response.data.directories);
+      setLanguage(response.data.project.projectType);
     }).catch((error) => {
       console.log(error);
     });
@@ -80,21 +91,28 @@ const ProjectsPage = () => {
 
   const run = async () => {
     setProcessing(true);
-    axios.post("/api/runCode", { code, language: language, customInput: customInput }).
-      then((response) => {
+    axios.post("/api/runCode", { code, language })
+      .then(response => {
         const output = response.data.data.output;
         setOutputDetails({ output: output, error: "" });
         setProcessing(false);
-        axios.post("/api/save", { code, fileName, projectId }).then((response) => {
-          console.log(response)
-        }).catch((error) => {
-            console.log(error)
-        });
-        return;
-      }).catch((err) => {
-
-        const error = err.response.data.error.status.description;
-
+        axios.post("/api/save", { code, files, projectId })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      })
+      .catch(err => {
+        const error = err.response.data.error;
+        axios.post("/api/save", { code, files, projectId })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
         setOutputDetails({ output: "", error: error });
         setProcessing(false);
       });
@@ -185,14 +203,14 @@ useEffect(()=>{
         {/* <Header imgUrl={account?.profileImage} /> */}
       </div>
       <div className="flex flex-row justify-end">
-        <SideBar fileName={fileName} accountid={account?.id} />
+        <SideBar files={files} directories={directories} project={project} setFileContent={setFileContent} setCode={setCode} />
         <div className="overlay overflow-clip w-full h-full bg-[#2a2828]">
           <Editor
             height="90vh"
             width={`100%`}
-            language={language.value || 'javascript'}
+            language={language}
             value={code}
-            theme={'vs-dark'}
+            theme="dracula"
             options={{
               minimap: {
                 enabled: false,
