@@ -33,7 +33,6 @@ const ProjectsPage = () => {
   const params = useSearchParams();
   const monaco = useMonaco();
   const projectId = params.get('projectId');
-  console.log(projectId);
   const [account, setAccount] = useState<unknown>(null)
 
   const id = AuthProvider();
@@ -65,7 +64,6 @@ const ProjectsPage = () => {
   const [fileContent, setFileContent] = useState("");
 
 
-
   useEffect(() => {
     // Load and apply the theme
     import("monaco-themes/themes/Dracula.json")
@@ -84,6 +82,8 @@ const ProjectsPage = () => {
       setProject(response.data.project);
       setDirectories(response.data.directories);
       setLanguage(response.data.project.projectType);
+
+      // setFileContent(response.data.fileContent.main_js)
     }).catch((error) => {
       console.log(error);
     });
@@ -96,24 +96,25 @@ const ProjectsPage = () => {
         const output = response.data.data.output;
         setOutputDetails({ output: output, error: "" });
         setProcessing(false);
-        axios.post("/api/save", { code, files, projectId })
-          .then(response => {
-            console.log(response);
-          })
-          .catch(error => {
-            console.log(error);
-          });
+        // axios.post("/api/save", { code, files, projectId })
+        //   .then(response => {
+        //     console.log(response);
+        //   })
+        //   .catch(error => {
+        //     console.log(error);
+        //   });
       })
       .catch(err => {
         const error = err.response.data.error;
-        axios.post("/api/save", { code, files, projectId })
-          .then(response => {
-            console.log(response);
-          })
-          .catch(error => {
-            console.log(error);
-          });
-        setOutputDetails({ output: "", error: error });
+        console.log(error)
+        // axios.post("/api/save", { code, files, projectId })
+        //   .then(response => {
+        //     console.log(response);
+        //   })
+        //   .catch(error => {
+        //     console.log(error);
+        //   });
+        setOutputDetails({ output: "", error:error});
         setProcessing(false);
       });
   };

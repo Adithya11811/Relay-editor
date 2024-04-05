@@ -21,14 +21,13 @@ import axios from 'axios'
 
 export const SideBar = ({ ...props }) => {
     const [open, setOpen] = useState<boolean | undefined>(false)
-    const [language, setLanguage] = useState(languageOptions[0])
     const router = useRouter()
     const files = props.files
     const project = props.project
     const directories = props.directories
+    const setFileContent = props.setFileContent
     // console.log(files)
-    console.log(project?.projectName)
-    // console.log(directories)
+     // console.log(directories)
     // const onSelectChange = (
     //   sl: SetStateAction<{
     //     id: number
@@ -55,27 +54,27 @@ export const SideBar = ({ ...props }) => {
       },
     })
 
-    const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
-      values.lang = language.value
-      values.accountId = props.accountid
-      console.log(values)
-      switch (values.lang) {
-        case 'python':
-          values.extension = 'py'
-          break
-        case 'cpp':
-          values.extension = 'cpp'
-          break
-        case 'c':
-          values.extension = 'c'
-          break
-        case 'javascript':
-          values.extension = 'js'
-          break
-        case 'typescript':
-          values.extension = 'ts'
-          break
-      }
+    // const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
+    //   values.lang = language.value
+    //   values.accountId = props.accountid
+    //   console.log(values)
+    //   switch (values.lang) {
+    //     case 'python':
+    //       values.extension = 'py'
+    //       break
+    //     case 'cpp':
+    //       values.extension = 'cpp'
+    //       break
+    //     case 'c':
+    //       values.extension = 'c'
+    //       break
+    //     case 'javascript':
+    //       values.extension = 'js'
+    //       break
+    //     case 'typescript':
+    //       values.extension = 'ts'
+    //       break
+    //   }
 
       // axios
       //   .post('/api/project', values)
@@ -87,11 +86,13 @@ export const SideBar = ({ ...props }) => {
       //   .catch((error) => {
       //     console.log(error)
       //   })
-    }
+    // }
   return (
     <div className="hover:border hover:border-green-600 p-2 bg-gray-800/40 text-md w-72">
       <div className="flex mx-2 flex-col justify-start items-start">
         <div className='text-white'>{project?.projectName}</div>
+        
+        {/* <div className='text-white m-2'>{files[0][0]?.name}</div> */}
         {/* <div>
           {' '}
           <Dialog open={open} onOpenChange={setOpen}>
