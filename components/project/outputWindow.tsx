@@ -2,12 +2,12 @@ import React from "react";
 
 
 const OutputWindow = ({ outputDetails }: { outputDetails: any }) => {
-    const getOutput = () => {
+  const getOutput = () => {
     if (outputDetails?.error) {
       // Compilation error
       return (
         <span className="px-2 py-1 font-normal text-lg text-red-500">
-          {outputDetails?.error}
+          {outputDetails?.error?.status?.description}
         </span>
       );
     } else if (outputDetails?.output) {
@@ -24,7 +24,7 @@ const OutputWindow = ({ outputDetails }: { outputDetails: any }) => {
       // Default case
       return (
         <span className="px-2 py-1 font-normal text-lg text-red-500">
-          {outputDetails?.error}
+          {outputDetails?.error?.status?.description}
         </span>
       );
     }

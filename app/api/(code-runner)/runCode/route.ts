@@ -12,7 +12,7 @@ const requestCounts = new Map();
 export async function POST(request: NextRequest) {
     let { code, language } = await request.json();
     const docker = new Dockerode();
-    console.log(language)
+   
     try {
         // Check if the IP address has exceeded the rate limit
         const clientIP = request?.remoteAddr;
@@ -37,8 +37,7 @@ export async function POST(request: NextRequest) {
 
         let image;
         let command;
-
-        // Determine Docker image and command based on language
+                // Determine Docker image and command based on language
         switch (language) {
             case 'python':
                 image = 'python:latest';
@@ -49,23 +48,25 @@ export async function POST(request: NextRequest) {
                 image = 'node:latest';
                 
                 command = ['node', '-e', code];
-                console.log(command)
                 break;
-            case 'c':
+           case 'c':
                 code = removeCommentsCpp(code);
+                // Escape double quotes in the code
+                code = code.replace(/"/g, '\\"');
                 image = 'gcc:latest';
-                command = ['bash', '-c', `echo '${code}' > /tmp/code.c && gcc /tmp/code.c -o /tmp/code && /tmp/code`];
-                console.log(command)
+                command = ['bash', '-c', `echo "${code}" > /tmp/code.c && gcc /tmp/code.c -o /tmp/code && /tmp/code`];
                 break;
-           case 'cpp':
+            case 'cpp':
                 code = removeCommentsCpp(code);
+                // Escape single and double quotes in the code
+                code = code.replace(/'/g, "\\'").replace(/"/g, '\\"');
                 image = 'gcc:latest';
                 command = [
                     'bash',
                     '-c',
-                    `echo '${code.replace(/'/g, "\\'")}' > /tmp/code.cpp && g++ /tmp/code.cpp -o /tmp/code && /tmp/code`
+                     `echo '${code}' > /tmp/code.cpp && g++ /tmp/code.cpp -o /tmp/code && /tmp/code`
                 ];
-             break;
+                break;
 
             default:
                 return NextResponse.json({ error: "Unsupported language" }, { status: 400 });
@@ -91,8 +92,11 @@ export async function POST(request: NextRequest) {
 
         // Get the container's logs
         const logStream = await container.logs({ stdout: true, stderr: true });
+        // const stats = await container.stats()
+        // const memoryUsage = stats.memory_stats.usage
         const output = logStream.toString(); // Convert logs to string
         console.log(output)
+        // console.log(memoryUsage)
         // Separate output and error messages
         const lines = output.split('\n');
         const errorMessages = lines.filter(line => line.toLowerCase().includes('error'));
@@ -130,9 +134,10 @@ export async function POST(request: NextRequest) {
 }
 function removeAnsiEscapeSequences(input: string) {
     // Regular expression to match ANSI escape sequences
-    const ansiRegex = /(\u001B\[[0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/g;
+    const ansiRegex = /\u001B\[[0-9;]*[mK]/g;
     return input.replace(ansiRegex, '');
 }
+
 function removeCommentsCpp(code: string): string {
     // Remove single-line comments
     code = code.replace(/\/\/.*$/gm, '');

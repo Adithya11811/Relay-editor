@@ -9,7 +9,7 @@ enum ProjectType {
   JavaScript = 'javascript',
   TypeScript = 'typescript',
   Cpp = 'cpp',
-  C = 'c',
+  c = 'c',
 }
 
 
@@ -65,7 +65,7 @@ export async function POST(request:NextRequest){
             case 'js': projectType = ProjectType.JavaScript; break;
             case 'ts': projectType = ProjectType.TypeScript; break;
             case 'cpp': projectType = ProjectType.Cpp; break;
-            case 'c': projectType = ProjectType.C; break;
+            case 'c': projectType = ProjectType.c; break;
     }
     await unlink(`${folderPath}/main.${extension}`)
     console.log(res)
