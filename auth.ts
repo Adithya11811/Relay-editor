@@ -66,45 +66,45 @@ export const {
       return true;
     },
 async session({ token, session }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
+  if (token.sub && session.user) {
+    session.user.id = token.sub;
+  }
 
-      if (token.role && session.user) {
-        session.user.role = token.role as UserRole;
-      }
+  if (token.role && session.user) {
+    session.user.role = token.role as UserRole;
+  }
 
-      if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-        session.user.expires = token.expires as number;
-      }
+  if (session.user) {
+    session.user.isTwoFactorEnabled = !!token.isTwoFactorEnabled; // Ensure proper conversion to boolean
+    session.user.expires = token.expires as number; // Ensure proper type assignment
+  }
 
-      const account = await getAccountByUserId(session.user.id);
-      if (account?.access_token) {
-        session.user.accessToken = account.access_token;
-      }
+  const account = await getAccountByUserId(session.user.id);
+  if (account?.access_token) {
+    session.user.accessToken = account?.access_token;
+  }
 
-      return session;
-    },
-    async jwt({ token }) {
-      if (!token.sub) return token;
+  return session;
+},
 
-      const existingUser = await getUserById(token.sub);
+async jwt({ token }) {
+  if (!token.sub) return token;
 
-      if (!existingUser) return token;
+  const existingUser = await getUserById(token.sub);
 
-      const existingAccount = await getAccountByUserId(
-        existingUser.id
-      );
+  if (!existingUser) return token;
 
-      token.isOAuth = !!existingAccount;
-      token.name = existingUser.name;
-      token.email = existingUser.email;
-      token.role = existingUser.role;
-      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-      token.expires=existingAccount!.expires_at as unknown as string;
-      return token;
-    }
+  const existingAccount = await getAccountByUserId(existingUser.id);
+
+  token.isOAuth = !!existingAccount;
+  token.name = existingUser.name;
+  token.email = existingUser.email;
+  token.role = existingUser.role;
+  token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+  token.expires = existingAccount?.expires_at ?? null; // Ensure proper handling of null or undefined
+  return token;
+},
+
   },
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },

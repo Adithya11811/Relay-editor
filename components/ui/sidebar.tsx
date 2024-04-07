@@ -1,163 +1,107 @@
-'use client';
-import Link from 'next/link'
+import Image from 'next/image';
+import { useState } from 'react';
+import axios from 'axios';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { Button } from '@/components/ui//button'
-import { FaPlus } from 'react-icons/fa'
-import LanguagesDropdown from '../project/languageDropdown'
-import { Form } from 'react-hook-form'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './form'
-import { Input } from './input'
-import { useTransition } from 'react'
-import { useEffect, useState } from 'react'
-import { redirect, useRouter } from 'next/navigation'
-import { languageOptions } from '@/constants/languageOptions'
-import { SetStateAction } from 'react'
-import { useForm } from 'react-hook-form'
-import { ProjectSchema } from '@/schema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import axios from 'axios'
+import { Button } from '@/components/ui/button'
+import { Form } from './form';
 
+interface SideBarProps {
+  files: any[];
+  project: any; // Adjust the type to match the actual project object
+  setFileContent: React.Dispatch<React.SetStateAction<string>>;
+  setCode: React.Dispatch<React.SetStateAction<string>>;
+  setFilename: React.Dispatch<React.SetStateAction<string>>;
+  setExtension: React.Dispatch<React.SetStateAction<string>>;
+  extension:string;
+  fileContents: any; // Change the type to match the actual structure of file contents
+}
 
-export const SideBar = ({ ...props }) => {
-    const [open, setOpen] = useState<boolean | undefined>(false)
-    const router = useRouter()
-    const files = props.files
-    const project = props.project
-    const directories = props.directories
-    const setFileContent = props.setFileContent
-    // console.log(files)
-     // console.log(directories)
-    // const onSelectChange = (
-    //   sl: SetStateAction<{
-    //     id: number
-    //     name: string
-    //     label: string
-    //     value: string
-    //   }>
-    // ) => {
-    //   console.log('selected Option...', sl)
-    //   setLanguage(sl)
-    // }
+export const SideBar = ({ files, project, setFileContent,setExtension,extension, setFilename, setCode, fileContents }: SideBarProps) => {
+  const [open, setOpen] = useState<boolean>(false)
+  const [fileName, setFileName] = useState('');
+  const [newFileName, setNewFileName] = useState('');
+  const [creatingFile, setCreatingFile] = useState(false);
+  const projectId = project?.projectId ||"";
+  const handleFileClick = (file: any) => {
+    const [fileBaseName, fileExt] = file.name.split('.');
+    if (fileBaseName && fileExt) { // Ensure both parts are present
+      setFilename(file.name);
+      setFileName(fileBaseName);
+      setExtension(fileExt);
+      const fileContentKey = `${fileBaseName}_${fileExt}`;
+      if (fileContents[fileContentKey]) { // Check if the file content exists
+        setCode(fileContents[fileContentKey]);
+      } else {
+        console.error(`File content not found for ${file.name}`);
+      }
+    } else {
+      console.error(`Invalid file name format: ${file.name}`);
+    }
+  };
 
-    const [isPending, startTransition] = useTransition()
-    // const [error, setError] = useState<string | undefined>('')
-    // const [success, setSuccess] = useState<string | undefined>('')
-    const form = useForm<z.infer<typeof ProjectSchema>>({
-      resolver: zodResolver(ProjectSchema),
-      defaultValues: {
-        lang: '',
-        pname: '',
-        pdescp: '',
-        extension: '',
-        accountId: '',
-      },
-    })
+  const createNewFile = async () => {
+    try {
+      setCreatingFile(true);
+      await axios.post('/api/createFile', { project, extension, file_name: newFileName });
+      setCreatingFile(false);
+      setNewFileName('');
+      setOpen(false); // Close the dialog after creating the file
+     await axios.post('/api/getProject',{projectId})
+      // Fetch updated file list or perform any other necessary action
+    } catch (error) {
+      console.error('Error creating file:', error);
+      setCreatingFile(false);
+    }
+  };
 
-    // const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
-    //   values.lang = language.value
-    //   values.accountId = props.accountid
-    //   console.log(values)
-    //   switch (values.lang) {
-    //     case 'python':
-    //       values.extension = 'py'
-    //       break
-    //     case 'cpp':
-    //       values.extension = 'cpp'
-    //       break
-    //     case 'c':
-    //       values.extension = 'c'
-    //       break
-    //     case 'javascript':
-    //       values.extension = 'js'
-    //       break
-    //     case 'typescript':
-    //       values.extension = 'ts'
-    //       break
-    //   }
-
-      // axios
-      //   .post('/api/project', values)
-      //   .then((response) => {
-      //     console.log(response)
-      //     const projectId = response.data.data.id
-      //     router.push(`/editor?projectId=${projectId}`)
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
-    // }
   return (
     <div className="hover:border hover:border-green-600 p-2 bg-gray-800/40 text-md w-72">
+      <div className="m-2">
+        <Button variant="runner" className="text-center w-full" onClick={() => setOpen(true)}>+ File</Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            
+          </DialogTrigger>
+          <DialogContent>
+            <button className="absolute top-1 right-2 text-gray-500 hover:text-gray-700 focus:outline-none">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="flex flex-col items-start">
+              <h3 className="text-lg font-semibold mb-2">Enter new file name:</h3>
+              <input
+                type="text"
+                value={newFileName}
+                onChange={(e) => setNewFileName(e.target.value)}
+                className="border border-gray-300 text-black rounded px-3 py-2 mb-2 w-full"
+                placeholder="Enter file name..."
+              />
+              <Button
+                variant="runner"
+                onClick={createNewFile}
+                disabled={!newFileName || creatingFile}
+                className="w-full"
+              >
+                {creatingFile ? 'Creating...' : 'Create File'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
       <div className="flex mx-2 flex-col justify-start items-start">
-        <div className='text-white'>{project?.projectName}</div>
-        
-        {/* <div className='text-white m-2'>{files[0][0]?.name}</div> */}
-        {/* <div>
-          {' '}
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="flex items-center gap-3 rounded-lg py-2 transition-all  text-gray-400 hover:text-gray-50">
-              <FaPlus />
-            </DialogTrigger>
-            <DialogContent className="w-50 flex flex-col justify-center items-center">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-2"
-                >
-                  <LanguagesDropdown onSelectChange={onSelectChange} />
-                  <div className=" space-y-6 m-2">
-                    <FormField
-                      control={form.control}
-                      name="pname"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Project Name:</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                disabled={isPending}
-                                placeholder=""
-                                type="text"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )
-                      }}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="pdescp"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Project description:</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                disabled={isPending}
-                                placeholder="Interactive project"
-                                type="text"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  </div>
-                  <Button disabled={isPending} type="submit" className="w-full">
-                    Submit
-                  </Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
-        </div> */}
-        
+        <h2>{project?.projectName}</h2>
+        {/* Display other project details if needed */}
+      </div>
+      <div className="file-list ml-4">
+        <ul>
+          {files.map((file: any) => (
+            <li key={file.id} onClick={() => handleFileClick(file)}>
+              {file.name}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
-  )
-}
+  );
+};
