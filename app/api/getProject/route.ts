@@ -20,56 +20,53 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        const directories = await db.directory.findMany({
+        const files = await db.files.findMany({
             where: {
-                projectId: project.projectId
+                belongs_to: project.projectId
             }
         });
 
-        const files = await Promise.all(directories.map(async (directory) => {
-            return db.files.findMany({
-                where: {
-                    belongs_to: directory.id
-                }
-            });
-        }));
-
+        // Create a Supabase client
         const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-        const fileContents: Record<string, string> = {}; // Define type explicitly
-
-        for (const directoryFiles of files) {
-            for (const file of directoryFiles) {
-                const { data, error } = await supabase.storage.from(project.creator).download(file.fileUrl!);
-
-                if (error) {
-                    return NextResponse.json({
-                        error: "Error downloading file"
-                    }, {
-                        status: 500
-                    });
-                }
-
-                if (!data) {
-                    return NextResponse.json({
-                        error: "No data received after downloading file"
-                    }, {
-                        status: 500
-                    });
-                }
-                const fileName = file.name.replace(/\./g, '_');
-                fileContents[fileName] = await new Response(data).text();
+        
+        // Download files from Supabase storage
+        const fileContents:any = {};
+        for (const file of files) {
+            const { data, error } = await supabase.storage.from(project.creator).download(file.fileUrl);
+            if (error) {
+                // Handle error
+                console.error("Error downloading file:", error);
+                return NextResponse.json({
+                    error: "Error downloading file"
+                }, {
+                    status: 500
+                });
+            }
+            if (data) {
+                    // Save file content
+                const fileNameWithoutDots = file.name.replace(/\./g, '_'); // Replace dots with underscores
+                fileContents[fileNameWithoutDots] =await new Response(data).text();
             }
         }
-
+        let extension;
+        switch (project.projectType) {
+         case "c":extension='c';break;
+         case "typescript":extension='ts';break;
+         case "python":extension='py';break;
+         case "javascript":extension='js';break;
+         case "cpp":extension='cpp';break;
+        }
+        // Respond with the downloaded file contents
         return NextResponse.json({
-            message: "Project fetched successfully",
+            message: "Files downloaded successfully",
+            fileContents,
             project,
             files,
-            fileContents,
-            directories
+            extension
         }, {
             status: 200
         });
+
     } catch (error) {
         console.error("Error:", error);
         return NextResponse.json({

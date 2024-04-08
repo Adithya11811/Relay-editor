@@ -1,25 +1,25 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuContent,
-  DropdownMenu,
-} from '@/components/ui/dropdown-menu'
+// import {
+//   DropdownMenuTrigger,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
+//   DropdownMenuItem,
+//   DropdownMenuContent,
+//   DropdownMenu,
+// } from '@/components/ui/dropdown-menu'
 import { useTransition } from 'react'
 import { useEffect, useState } from 'react'
 import { BellIcon, Router, SettingsIcon } from 'lucide-react'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { GrProjects } from 'react-icons/gr'
-import { Avatar, AvatarImage, AvatarFallback } from './avatar'
-import { GitHubLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons'
+// import { Avatar, AvatarImage, AvatarFallback } from './avatar'
+// import { GitHubLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-import { useCurrentUser } from '@/hooks/use-current-user'
-import { LogoutButton } from '../auth/logout-button'
+// import { useCurrentUser } from '@/hooks/use-current-user'
+// import { LogoutButton } from '../auth/logout-button'
 import { getAccountByUserId } from '@/data/user'
-import { AuthProvider } from '@/hooks/AuthProvider'
+// import { AuthProvider } from '@/hooks/AuthProvider'
 import { redirect, useRouter } from 'next/navigation'
 import { HoverEffect } from './hoverCard'
 import { Dialog, DialogContent, DialogTrigger } from './dialog'
@@ -45,6 +45,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import axios from 'axios'
 import Header from './BHeader'
+import { signOut, useSession } from 'next-auth/react'
 
 interface ProfileProps {
   id: string
@@ -73,6 +74,7 @@ interface account {
 }
 
 const Profile: React.FC<ProfileProps> = ({ id }) => {
+  const session = useSession();
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0])
@@ -145,7 +147,13 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
         console.log(error)
     })
   }
-
+  if((new Date(session.data?.expires)) < (new Date(Date.now()))){
+    signOut();
+  }
+  if(!session)
+{
+  router.push("/auth/login")
+}
   return (
     <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
       <div className="hidden  lg:block bg-gray-800/40">
@@ -197,6 +205,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                                     disabled={isPending}
                                     placeholder=""
                                     type="text"
+                                    className='texg-black'
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -342,13 +351,14 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                             render={({ field }) => {
                               return (
                                 <FormItem>
-                                  <FormLabel className='text-black'>Project Name:</FormLabel>
+                                  <FormLabel >Project Name:</FormLabel>
                                   <FormControl>
                                     <Input
                                       {...field}
                                       disabled={isPending}
                                       placeholder=""
                                       type="text"
+                                      className='text-black'
                                     />
                                   </FormControl>
                                   <FormMessage />
@@ -371,6 +381,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                                       disabled={isPending}
                                       placeholder="Interactive project"
                                       type="text"
+                                      className='text-black'
                                     />
                                   </FormControl>
                                   <FormMessage />

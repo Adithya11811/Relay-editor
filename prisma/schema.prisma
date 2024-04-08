@@ -47,7 +47,7 @@ model Account {
   banner            String? @default("")
   type              String
   provider          String
-  providerAccountId String
+  providerAccountId String @default(uuid())
   refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
@@ -59,6 +59,7 @@ model Account {
   updated_at        DateTime @default(now())
   projects          Project[]               // Adjust the relationship
   user              User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+@@unique([provider,providerAccountId])
 }
 
 model VerificationToken {
@@ -106,25 +107,16 @@ model Project {
   updated_at          DateTime     @default(now())
   creator             String       // Adjust the field
   account             Account      @relation(fields: [creator], references: [id], onDelete: Cascade)
-  directories         Directory[]
+  files     Files[]
 }
 
-model Directory{
-  id String @id @default(uuid())
-  name String
-  projectId String 
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  project Project @relation(references: [projectId], fields: [projectId],onDelete: Cascade)
-  parent String
-  files Files[]
-}
+
 model Files{
   id String @id @default(uuid())
   name String
   belongs_to String
   fileUrl String
-  directory Directory @relation(references: [id], fields: [belongs_to],onDelete: Cascade)
+  project Project @relation(references: [projectId], fields: [belongs_to],onDelete: Cascade)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 }

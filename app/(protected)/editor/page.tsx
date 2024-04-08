@@ -49,7 +49,6 @@ const ProjectsPage = () => {
       fetchAccount()
     }, [id])
 
-  const [customInput, setCustomInput] = useState("");
   const [outputDetails, setOutputDetails] = useState({
     output: "",
     error: ""
@@ -59,10 +58,9 @@ const ProjectsPage = () => {
   const [language, setLanguage] = useState("");
   const [fileName, setFilename] = useState("");
   const [project, setProject] = useState(null);
-  const [directories, setDirectories] = useState([]);
   const [files, setFiles] = useState([]);
-  const [fileContent, setFileContent] = useState("");
-
+  const [fileContent, setFileContent] = useState({});
+  const [extension, setExtension] = useState("")
 
   useEffect(() => {
     // Load and apply the theme
@@ -76,18 +74,24 @@ const ProjectsPage = () => {
       });
   }, [monaco]);
 
-  useEffect(() => {
-    axios.post("/api/getProject", { projectId }).then((response) => {
-      setFiles(response.data.files);
-      setProject(response.data.project);
-      setDirectories(response.data.directories);
-      setLanguage(response.data.project.projectType);
+useEffect(() => {
+  axios.post("/api/getProject", { projectId }).then((response) => {
+    setFiles(response.data.files);
+    setProject(response.data.project);
+    setLanguage(response.data.project.projectType);
+    setFileContent(response.data.fileContents)
+    const projectExtension = response.data.extension;
+    const defaultFileName = `main.${projectExtension}`;
+    setExtension(projectExtension);
+    setFilename(defaultFileName);
+    // Check if the file content exists before accessing it
+    setCode(response.data.fileContents?.[`main_${projectExtension}`] || '');
+  }).catch((error) => {
+    console.log(error);
+  });
+}, [projectId]);
 
-      // setFileContent(response.data.fileContent.main_js)
-    }).catch((error) => {
-      console.log(error);
-    });
-  }, [projectId]);
+
 
   const run = async () => {
     setProcessing(true);
@@ -96,24 +100,25 @@ const ProjectsPage = () => {
         const output = response.data.data.output;
         setOutputDetails({ output: output, error: "" });
         setProcessing(false);
-        // axios.post("/api/save", { code, files, projectId })
-        //   .then(response => {
-        //     console.log(response);
-        //   })
-        //   .catch(error => {
-        //     console.log(error);
-        //   });
+        setFileContent(code)
+        axios.post("/api/save", { code,fileName,files, project })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       })
       .catch(err => {
         const error = err.response.data.error;
         console.log(error)
-        // axios.post("/api/save", { code, files, projectId })
-        //   .then(response => {
-        //     console.log(response);
-        //   })
-        //   .catch(error => {
-        //     console.log(error);
-        //   });
+        axios.post("/api/save", { code,fileName,files, project })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
         setOutputDetails({ output: "", error:error});
         setProcessing(false);
       });
@@ -204,7 +209,7 @@ useEffect(()=>{
         {/* <Header imgUrl={account?.profileImage} /> */}
       </div>
       <div className="flex flex-row justify-end">
-        <SideBar files={files} directories={directories} project={project} setFileContent={setFileContent} setCode={setCode} />
+        <SideBar files={files} setFilename={setFilename}  project={project} setExtension={setExtension} extension={extension} setFileContent={setFileContent} setCode={setCode} fileContents={fileContent} />
         <div className="overlay overflow-clip w-full h-full bg-[#2a2828]">
           <Editor
             height="90vh"
