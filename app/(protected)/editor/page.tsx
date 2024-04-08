@@ -23,6 +23,7 @@ import { Button } from '@/components/ui//button'
 import Image from 'next/image'
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ArrowLeft } from "lucide-react";
+import { FaTools } from 'react-icons/fa'
 import {
   Popover,
   PopoverContent,
@@ -156,18 +157,33 @@ useEffect(()=>{
             <Button
               onClick={run}
               disabled={!code}
-              className="rounded-lg px-4 hover:scale-110 lg:mx-40 py-1 flex items-center gap-2 bg-green-600 hover:bg-green-600 transition-all text- white hover:text-white"
+              className="rounded-lg px-4 hover:scale-110 lg:mx-32 py-1 flex items-center gap-2 bg-green-600 hover:bg-green-600 transition-all text- white hover:text-white"
             >
-              {processing ? 'Processing...' : 'Run'}
+              {processing ? (
+                <Image
+                  alt="Avatar"
+                  className="mix-blend-multiply bg-transparent"
+                  height="32"
+                  src={'/gears.gif'}
+                  style={{
+                    aspectRatio: '32/32',
+                    objectFit: 'cover',
+                  }}
+                  width="32"
+                />
+              ) : (
+                'Run'
+              )}
             </Button>
             <Popover>
-              <PopoverTrigger className="lg:-mx-32">
-                <Button
+              <PopoverTrigger className="lg:-mx-32 border flex hover:scale-110 items-center gap-2 justify-center rounded-lg px-3 bg-transparent border-slate-700 text-gray-400 hover:text-gray-50">
+                {/* <Button
                   variant={'link'}
                   className="border bg-transparent border-slate-700 text-gray-400 hover:text-gray-50"
-                >
-                  Performance
-                </Button>
+                > */}
+                <FaTools />
+                Performance
+                {/* </Button> */}
               </PopoverTrigger>
               <PopoverContent>Hello</PopoverContent>
             </Popover>

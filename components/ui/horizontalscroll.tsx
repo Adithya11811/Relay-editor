@@ -4,7 +4,7 @@ import { useRef } from 'react'
 
 interface CardProps {
   card: {
-    url: string
+    // url: string
     title: string
     id: number
   }
@@ -16,7 +16,7 @@ const HorizontalScrollCarousel: React.FC = () => {
     target: targetRef,
   })
 
-  const x = useTransform(scrollYProgress, [0, 1], ['1%', '-95%'])
+  const x = useTransform(scrollYProgress, [0, 1], ['50%', '-85%'])
 
   return (
     <section ref={targetRef} className="relative h-[400vh] bg-black">
@@ -33,54 +33,64 @@ const HorizontalScrollCarousel: React.FC = () => {
 
 const Card: React.FC<CardProps> = ({ card }) => {
   return (
-    <div
+    <motion.div
       key={card.id}
-      className="group relative h-[450px] w-screen overflow-hidden flex bg-gradient-to-br from-white/20 to-white/0"
+      className="group relative scroll-smooth m-8 border-4 rounded-lg border-green-500 h-[350px] w-[400px] overflow-hidden flex bg-transparent"
+      whileHover={{ scale: 1.1 }}
+      transition={{ duration: 0.3 }} // Adjust the duration as needed
     >
       {/* Left side content */}
-      <div className="flex-1">
+      <div className="flex-1 m-16">
         <div className="grid place-content-center h-full">
-          <div className="p-8 text-6xl font-black uppercase text-white backdrop-blur-lg">
-            {card.title}
+          {/* Card ID at top left corner */}
+          <div className="absolute top-0 left-0 m-2 opacity-50 text-white text-7xl font-bold">
+            0{card.id}
           </div>
+
+          {/* Title at bottom right corner */}
+          <motion.div className="absolute bottom-0 opacity-30 left-0 m-2 text-white text-5xl font-bold"
+          whileHover={{opacity:1}}
+          transition={{duration:0.6}}>
+            {card.title}
+          </motion.div>
         </div>
       </div>
 
       {/* Right side photo */}
-      <div
-        style={{
-          backgroundImage: `url(${card.url})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-        className="h-full w-1/2 transition-transform duration-300 group-hover:scale-110"
-      ></div>
-    </div>
+      {/* Add your photo component here */}
+    </motion.div>
   )
 }
-
 
 export default HorizontalScrollCarousel
 
 const cards = [
   {
-    url: '/hsec1.jpg',
+    // url: '/hsec1.jpg',
     title: 'Interactive Coding Platform',
     id: 1,
   },
   {
-    url: '/hsec2.jpg',
+    // url: '/hsec2.jpg',
     title: 'Collaborative',
     id: 2,
   },
   {
-    url: '/hsec3.jpg',
+    // url: '/hsec3.jpg',
     title: 'Supports Multiple Interfaces',
     id: 3,
   },
   {
-    url: '/hsec4.jpg',
+    // url: '/hsec4.jpg',
     title: 'diverse coding languages',
     id: 4,
   },
 ]
+      // <div
+      //   style={{
+      //     backgroundImage: `url(${card.url})`,
+      //     backgroundSize: 'cover',
+      //     backgroundPosition: 'center',
+      //   }}
+      //   className="h-full w-1/2 transition-transform duration-300 group-hover:scale-110"
+      // ></div>

@@ -1,9 +1,12 @@
 import { LoginForm } from "@/components/auth/login-form";
+import Navbar from '@/components/ui/navbar'
 
 const LoginPage =  () =>{
-    return(
-        
-        <LoginForm/>
+    return (
+      <>
+        {/* <Navbar /> */}
+        <LoginForm />
+      </>
     )
 }
 

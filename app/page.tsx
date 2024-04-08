@@ -5,6 +5,7 @@ import CustomCursor from '@/components/ui/customCursor'
 import Enter from '@/components/ui/Enter/Enter';
 import HorizontalScrollCarousel from '@/components/ui/horizontalscroll';
 import Footer from '@/components/ui/footer';
+import Aboutus from '@/components/ui/Aboutus';
 
 
 const page = () => {
@@ -15,7 +16,9 @@ const page = () => {
       <Enter/>
       <HorizontalScrollCarousel/>
       {/* <div className='h-screen bg-red-300'></div> */}
+      <Aboutus/>
       <Footer/>
+      
     </div>
   );
 }

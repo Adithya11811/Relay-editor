@@ -16,24 +16,18 @@ const Header: React.FC<profileProps> = ({imgUrl}) => {
       >
         <span className="">Relay Editor</span>
       </Link>
-      <nav className="hidden lg:flex lg:flex-1 lg:gap-4 lg:justify-center lg:text-sm">
+      <nav className=" flex flex-1 gap-2 lg:gap-4 justify-center text-sm">
         <Link
-          className="flex items-center gap-2 rounded-lg px-3 py-2  transition-all text-gray-400 hover:text-gray-50"
+          className=" hidden lg:flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 bg-slate-800 tracking-wide transition-all text-gray-400 hover:text-gray-50"
           href="#"
         >
-          Home
+          Profile
         </Link>
         <Link
-          className="flex items-center gap-2 rounded-lg  px-3 py-2  transition-all text-gray-400 hover:text-gray-50"
+          className="flex items-center gap-2 rounded-lg hover:scale-105  px-3 py-2 tracking-wide transition-all text-gray-400 hover:text-gray-50"
           href="#"
         >
-          My Profile
-        </Link>
-        <Link
-          className="flex items-center gap-2 rounded-lg px-3 py-2 transition-all  text-gray-400 hover:text-gray-50"
-          href="#"
-        >
-          Settings
+          Projects
         </Link>
       </nav>
       <DropdownMenu>
@@ -58,13 +52,20 @@ const Header: React.FC<profileProps> = ({imgUrl}) => {
             <span className="sr-only">Toggle user menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent
+          align="end"
+          className="bg-slate-800/20  text-gray-400"
+        >
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/20">
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/20">
+            Support
+          </DropdownMenuItem>
+          {/* <DropdownMenuSeparator /> */}
+          <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/60">
             <LogoutButton>Logout</LogoutButton>
           </DropdownMenuItem>
         </DropdownMenuContent>

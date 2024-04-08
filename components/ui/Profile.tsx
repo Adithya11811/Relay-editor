@@ -45,7 +45,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import axios from 'axios'
 import Header from './BHeader'
-import { signOut, useSession } from 'next-auth/react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card'
+import Bsidebar from './Bsidebar'
 
 interface ProfileProps {
   id: string
@@ -74,8 +75,7 @@ interface account {
 }
 
 const Profile: React.FC<ProfileProps> = ({ id }) => {
-  const session = useSession();
-  const [account, setAccount] = useState<unknown>(null)
+  const [account, setAccount] = useState<account>()
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0])
   const router = useRouter()
@@ -156,137 +156,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
 }
   return (
     <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
-      <div className="hidden  lg:block bg-gray-800/40">
-        <div className="flex h-full max-h-screen flex-col">
-          <div className="flex h-[60px] items-center  px-6">
-            <Link className="flex items-center gap-2 font-semibold" href="#">
-              <span className="text-xl">Relay</span>
-            </Link>
-            <Button
-              className="ml-auto h-10 w-10 rounded-full "
-              size="icon"
-              variant="ghost"
-            >
-              <IoIosNotifications size={30} />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
-          </div>
-          <div className="flex-1 overflow-clip py-2">
-            <nav className="grid items-start pl-4 text-sm font-medium">
-              <Link
-                className="flex items-center gap-3 rounded-lg  py-2  transition-all  text-gray-400 hover:text-gray-50"
-                href="#"
-              >
-                Home
-              </Link>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger className="flex items-center gap-3 rounded-lg py-2 transition-all  text-gray-400 hover:text-gray-50">
-                  <FaPlus />
-                  Create Project
-                </DialogTrigger>
-                <DialogContent className="w-50 flex flex-col justify-center items-center text-black">
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-2 text-black"
-                    >
-                      <LanguagesDropdown onSelectChange={onSelectChange} />
-                      <div className=" space-y-6 m-2">
-                        <FormField
-                          control={form.control}
-                          name="pname"
-                          render={({ field }) => {
-                            return (
-                              <FormItem>
-                                <FormLabel>Project Name:</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    disabled={isPending}
-                                    placeholder=""
-                                    type="text"
-                                    className='texg-black'
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )
-                          }}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="pdescp"
-                          render={({ field }) => {
-                            return (
-                              <FormItem>
-                                <FormLabel>Project description:</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    disabled={isPending}
-                                    placeholder="Interactive project"
-                                    type="text"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      </div>
-                      <Button
-                        disabled={isPending}
-                        type="submit"
-                        className="w-full"
-                      >
-                        Submit
-                      </Button>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </Dialog>
-              <Link
-                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
-                href="#"
-              >
-                <GrProjects />
-                Projects
-              </Link>
-
-              <Link
-                className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
-                href="#"
-              >
-                <RiUserFollowFill />
-                Follow
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
-                href="#"
-              >
-                <SettingsIcon className="h-4 w-4" />
-                Settings
-              </Link>
-            </nav>
-          </div>
-          {/* <div className="mt-auto p-4">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full" size="sm">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
-          </div> */}
-        </div>
-      </div>
+      <Bsidebar id={id} />
 
       <div className="flex flex-col">
         <Header imgUrl={account?.profileImage} />
@@ -318,16 +188,18 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                 </Button> */}
                     </div>
                     <div className="flex gap-5 items-center">
-                      <p className="text-xl ml-3 text-gray-500 dark:text-gray-400">
-                        <Link href="#">
+                      <div className="text-xl ml-3 text-gray-500 dark:text-gray-400 focus:text-white">
+                        <Link
+                          href={account?.linkedinLink || '#'}
+                        >
                           <FaLinkedinIn size={30} />
                         </Link>
-                      </p>
-                      <p className="text-xl text-gray-500 dark:text-gray-400">
-                        <Link href="#">
+                      </div>
+                      <div className="text-xl text-gray-500 dark:text-gray-400 focus:text-white">
+                        <Link href={account?.githubLink || '#'}>
                           <FaGithub size={30} />
                         </Link>
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -351,7 +223,9 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                             render={({ field }) => {
                               return (
                                 <FormItem>
-                                  <FormLabel >Project Name:</FormLabel>
+                                  <FormLabel className="text-black">
+                                    Project Name:
+                                  </FormLabel>
                                   <FormControl>
                                     <Input
                                       {...field}

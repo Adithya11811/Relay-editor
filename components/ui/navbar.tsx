@@ -59,7 +59,7 @@ const Navbar = () => {
             <Link className="flex font-medium items-center" href="/">
               Home
             </Link>
-            <Link className="flex font-medium items-center" href="/about">
+            <Link className="flex font-medium items-center" href="#about">
               About US
             </Link>
             <Link className="flex font-medium items-center" href="/contact">

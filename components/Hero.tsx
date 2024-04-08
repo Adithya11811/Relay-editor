@@ -8,7 +8,7 @@ import BlurryCursor from './ui/cursor'
 const Hero = () => {
   return (
     <div>
-      <BlurryCursor />
+      {/* <BlurryCursor /> */}
       <GridBackground>
         {/* <BlurryCursor/> */}
         <div className="h-full flex flex-col justify-center items-center">
