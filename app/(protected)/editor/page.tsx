@@ -6,7 +6,6 @@ import axios from "axios";
 import { languageOptions } from "@/constants/languageOptions";
 import OutputWindow from "@/components/project/outputWindow";
 import { useSearchParams } from "next/navigation";
-import * as monaco from 'monaco-editor'
 // import Header from "@/components/ui/EHeader";
 import { AuthProvider } from "@/hooks/AuthProvider";
 import { getAccountByUserId } from "@/data/user";
@@ -29,6 +28,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import { error } from "console";
+
 
 const ProjectsPage = () => {
   const params = useSearchParams();
@@ -54,6 +56,7 @@ const ProjectsPage = () => {
     output: "",
     error: ""
   });
+  const [openInvite, setOpenInvite] = useState<boolean>(false);
   const [processing, setProcessing] = useState(false);
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("");
@@ -62,6 +65,8 @@ const ProjectsPage = () => {
   const [files, setFiles] = useState([]);
   const [fileContent, setFileContent] = useState({});
   const [extension, setExtension] = useState("")
+  const [username,setUsername] = useState("")
+  const [invitingUser,setInvitingUser] = useState(false)
 
   useEffect(() => {
     // Load and apply the theme
@@ -85,14 +90,13 @@ useEffect(() => {
     const defaultFileName = `main.${projectExtension}`;
     setExtension(projectExtension);
     setFilename(defaultFileName);
+
     // Check if the file content exists before accessing it
     setCode(response.data.fileContents?.[`main_${projectExtension}`] || '');
   }).catch((error) => {
     console.log(error);
   });
 }, [projectId]);
-
-
 
   const run = async () => {
     setProcessing(true);
@@ -124,12 +128,22 @@ useEffect(() => {
         setProcessing(false);
       });
   };
-useEffect(()=>{
-  setCode(code);
-},[code])
-  const handleEditorChange = (value: SetStateAction<string>) => {
-    setCode(value);
-  };
+  const inviteUser= ()=>{
+    axios.post('/api/invite',{username,account,project})
+    .then((response)=>{
+      if(response.status==200)
+        setInvitingUser(false);
+      setOpenInvite(false);
+      console.log(response)
+    }).catch((error)=>{
+      console.log(error)
+      setInvitingUser(false)
+    })
+  }
+
+    const handleEditorChange = (value: any) => {
+      setCode(value);
+    };
 
   return (
     <div className="flex flex-col justify-center align-middle">
@@ -187,7 +201,38 @@ useEffect(()=>{
               </PopoverTrigger>
               <PopoverContent>Hello</PopoverContent>
             </Popover>
+            
           </nav>
+          <Button variant="runner" className="text-center w-fit" onClick={() => setOpenInvite(true)}>Invite</Button>
+          <Dialog open={openInvite} onOpenChange={setOpenInvite}>
+            <DialogTrigger asChild>
+            </DialogTrigger>
+            <DialogContent>
+              <button className="absolute top-2 right-3 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="flex flex-col items-start">
+                <h3 className="text-lg font-semibold mb-2">Enter new file name:</h3>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="border border-gray-300 text-black rounded px-3 py-2 mb-2 w-full"
+                  placeholder="Enter username..."
+                />
+                <Button
+                  variant="runner"
+                  onClick={inviteUser}
+                  disabled={!username || invitingUser}
+                  className="w-full"
+                >
+                  {invitingUser ? 'Inviting...' : 'Invite'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -209,7 +254,7 @@ useEffect(()=>{
                 />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
-            </DropdownMenuTrigger>
+              </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -221,6 +266,7 @@ useEffect(()=>{
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+         
         </header>
         {/* <Header imgUrl={account?.profileImage} /> */}
       </div>
@@ -266,15 +312,3 @@ useEffect(()=>{
 }
 
 export default ProjectsPage;
- {
-   /* {outputDetails && <OutputDetails outputDetails={outputDetails} />} */
- }
-             {
-               /* <textarea
-              rows={5}
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              placeholder="Custom input"
-              className="focus:outline-none w-full border-2 border-black z-10 rounded-md shadow-[5px_5px_0px_0px_rgba(0,0,0)] px-4 py-2 hover:shadow transition duration-200 bg-white mt-2"
-            ></textarea> */
-             }

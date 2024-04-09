@@ -80,10 +80,16 @@ interface account {
   username: string
 }
 
-const Bsidebar: React.FC<ProfileProps> = ({ id }) => {
+const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0])
+  const [invitations, setInvitations] = useState<any[]>([]);
+  const [invitedProjects, setInvitedProjects] = useState<any[]>([]);
+  const [sender,setSender] = useState<any[]>([]);
+  const [showInvitationDialog, setShowInvitationDialog] = useState<boolean>(false);
+  const [selectedInvitation, setSelectedInvitation] = useState<any>(null);
+
   const router = useRouter()
   const onSelectChange = (
     sl: SetStateAction<{
@@ -155,6 +161,40 @@ const Bsidebar: React.FC<ProfileProps> = ({ id }) => {
         console.log(error)
       })
   }
+
+  useEffect(() => {
+    axios.post("/api/getInvite", { account})
+      .then((response) => {
+        setInvitations(response.data.invitations);
+        setInvitedProjects(response.data.invitedProjects)
+        setSender(response.data.senders)
+      }).catch((error) => {
+        console.log(error)
+      })
+  })
+
+
+
+  const handleAcceptInvitation = (id)=>{
+    axios.post("/api/acceptInvitation", { id })
+      .then((response) => {
+        console.log(response)
+        if(response.data.projectId){
+          router.push(`/editor?projectId=${response.data.projectId}`)
+        }
+      }).catch((error) => {
+          console.log(error)
+      })
+  }
+    const handleDeclineInvitation = (id)=>{
+    axios.post("/api/rejectInvitation", { id })
+      .then((response) => {
+        console.log(response)
+        
+      }).catch((error) => {
+          console.log(error)
+      })
+  }
   return (
     <div className="hidden  lg:block bg-gray-800/40">
       <div className="flex h-full max-h-screen flex-col">
@@ -162,14 +202,33 @@ const Bsidebar: React.FC<ProfileProps> = ({ id }) => {
           <Link className="flex items-center gap-2 font-semibold" href="#">
             <span className="text-xl">Relay</span>
           </Link>
-          <Button
-            className="ml-auto h-10 w-10 rounded-full "
-            size="icon"
-            variant="ghost"
-          >
-            <IoIosNotifications size={30} />
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
+          {invitations.length > 0 && (
+            <Button
+              className="ml-auto h-10 w-10 rounded-full"
+              size="icon"
+              variant="ghost"
+              onClick={() => setShowInvitationDialog(true)}
+            >
+              <IoIosNotifications size={30} />
+              <span className="sr-only">Toggle notifications</span>
+            </Button>
+          )}
+          {showInvitationDialog && (
+            <Dialog open={true} onOpenChange={setShowInvitationDialog}>
+              <DialogContent className="w-fit flex flex-col justify-center items-center">
+                <h2 className="text-2xl font-semibold mb-4">Invitations</h2>
+                {invitations.map((invitation, index) => (
+                  <div key={index} className="my-2 text-black">
+                    <p>You are invited to {invitedProjects[index]} by {sender[index]}</p>
+                    <div className="flex flex-row justify-center items-center space-x-4">
+                    <Button onClick={() => handleAcceptInvitation(invitation.id)}>Accept</Button>
+                    <Button onClick={() => handleDeclineInvitation(invitation.id)}>Decline</Button>
+                    </div>
+                  </div>
+                ))}
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
         <div className="flex-1 overflow-clip py-2">
           <nav className="grid items-start pl-4 text-sm font-medium">

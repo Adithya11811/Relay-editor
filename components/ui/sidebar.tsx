@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Form } from './form';
+import { useRouter } from 'next/navigation';
 
 interface SideBarProps {
   files: any[];
@@ -16,24 +17,29 @@ interface SideBarProps {
   fileContents: any; // Change the type to match the actual structure of file contents
 }
 
-export const SideBar = ({ files, project, setFileContent,setExtension,extension, setFilename, setCode, fileContents }: SideBarProps) => {
-  const [open, setOpen] = useState<boolean>(false)
+export const SideBar = ({ files, project, setFileContent, setExtension, extension, setFilename, setCode, fileContents }: SideBarProps) => {
+  const [open, setOpen] = useState<boolean>(false);
   const [fileName, setFileName] = useState('');
   const [newFileName, setNewFileName] = useState('');
   const [creatingFile, setCreatingFile] = useState(false);
-  const projectId = project?.projectId ||"";
+  const [selectedFileName, setSelectedFileName] = useState<string>('');
+
+  const projectId = project?.projectId || "";
+  const router = useRouter();
+
   const handleFileClick = (file: any) => {
     const [fileBaseName, fileExt] = file.name.split('.');
-    if (fileBaseName && fileExt) { // Ensure both parts are present
+    if (fileBaseName && fileExt) {
       setFilename(file.name);
       setFileName(fileBaseName);
       setExtension(fileExt);
       const fileContentKey = `${fileBaseName}_${fileExt}`;
-      if (fileContents[fileContentKey]) { // Check if the file content exists
+      if (fileContents[fileContentKey]) {
         setCode(fileContents[fileContentKey]);
       } else {
         console.error(`File content not found for ${file.name}`);
       }
+      setSelectedFileName(file.name); // Set the clicked file name
     } else {
       console.error(`Invalid file name format: ${file.name}`);
     }
@@ -45,9 +51,9 @@ export const SideBar = ({ files, project, setFileContent,setExtension,extension,
       await axios.post('/api/createFile', { project, extension, file_name: newFileName });
       setCreatingFile(false);
       setNewFileName('');
-      setOpen(false); // Close the dialog after creating the file
-     await axios.post('/api/getProject',{projectId})
-      // Fetch updated file list or perform any other necessary action
+      setOpen(false);
+      await axios.post('/api/getProject', { projectId });
+      router.refresh();
     } catch (error) {
       console.error('Error creating file:', error);
       setCreatingFile(false);
@@ -60,7 +66,6 @@ export const SideBar = ({ files, project, setFileContent,setExtension,extension,
         <Button variant="runner" className="text-center w-full" onClick={() => setOpen(true)}>+ File</Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            
           </DialogTrigger>
           <DialogContent>
             <button className="absolute top-1 right-2 text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -91,12 +96,15 @@ export const SideBar = ({ files, project, setFileContent,setExtension,extension,
       </div>
       <div className="flex mx-2 flex-col justify-start items-start">
         <h2>{project?.projectName}</h2>
-        {/* Display other project details if needed */}
       </div>
       <div className="file-list ml-4">
         <ul>
           {files.map((file: any) => (
-            <li key={file.id} onClick={() => handleFileClick(file)}>
+            <li
+              key={file.id}
+              onClick={() => handleFileClick(file)}
+              className={selectedFileName === file.name ? 'bg-neutral-200' : ''}
+            >
               {file.name}
             </li>
           ))}
