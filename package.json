@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server": "node server"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.4.0",
@@ -39,6 +40,7 @@
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cors": "^2.8.5",
     "dockerode": "^4.0.2",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
@@ -73,6 +75,7 @@
     "react-use-clipboard": "^1.0.9",
     "resend": "^3.2.0",
     "sass": "^1.71.1",
+    "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "supabase": "^1.151.1",
     "tailwind-merge": "^2.2.2",

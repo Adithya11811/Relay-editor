@@ -60,6 +60,8 @@ model Account {
   projects          Project[]               // Adjust the relationship
   user              User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
 @@unique([provider,providerAccountId])
+invitation Invitation[]
+collaborators Collaborators[]
 }
 
 model VerificationToken {
@@ -119,4 +121,24 @@ model Files{
   project Project @relation(references: [projectId], fields: [belongs_to],onDelete: Cascade)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+}
+
+model Invitation {
+  id        String   @id @default(uuid())
+  senderId  String      // ID of the user sending the invitation
+  recipientId String  // Email address of the recipient user
+  projectId String
+  status    String   // Status of the invitation (e.g., pending, accepted, rejected)
+  createdAt DateTime @default(now()) // Timestamp for when the invitation was created
+  updatedAt DateTime @updatedAt   // Timestamp for when the invitation was last updated
+  
+  // Define a relationship between Invitation and User models
+  sender  Account    @relation(fields: [senderId], references: [id])
+}
+
+model Collaborators{
+  id String @id @default(uuid())
+  projectId String
+  collaborators String
+  collaborator Account @relation(fields: [collaborators],references: [id])
 }

@@ -3,11 +3,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from "./button"
 import Image from "next/image"
 import { LogoutButton } from "../auth/logout-button"
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover"
 interface profileProps {
     imgUrl: string
+    message:string
 }
 
-const Header: React.FC<profileProps> = ({imgUrl}) => {
+const Header: React.FC<profileProps> = ({imgUrl,message}) => {
   return (
     <header className="flex h-14 lg:h-[60px] items-center gap-4 px-6 bg-gray-800/40">
       <Link
@@ -32,6 +34,8 @@ const Header: React.FC<profileProps> = ({imgUrl}) => {
       </nav>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
+          <Popover>
+            <PopoverTrigger className="lg:-mx-32 border flex hover:scale-110 items-center gap-2 justify-center rounded-lg px-3 bg-transparent border-slate-700 text-gray-400 hover:text-gray-50">
           <Button
             className="rounded-full border-2 border-green-600 w-8 h-8 dark:border-gray-800"
             id="user-menu"
@@ -51,6 +55,9 @@ const Header: React.FC<profileProps> = ({imgUrl}) => {
             />
             <span className="sr-only">Toggle user menu</span>
           </Button>
+            </PopoverTrigger>
+            <PopoverContent>{message}</PopoverContent>
+          </Popover>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"

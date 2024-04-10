@@ -47,6 +47,7 @@ import axios from 'axios'
 import Header from './BHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card'
 import Bsidebar from './Bsidebar'
+import { signOut, useSession } from 'next-auth/react'
 
 interface ProfileProps {
   id: string
@@ -75,10 +76,13 @@ interface account {
 }
 
 const Profile: React.FC<ProfileProps> = ({ id }) => {
-  const [account, setAccount] = useState<account>()
+  const [account, setAccount] = useState()
   const [open, setOpen] = useState<boolean | undefined>(false)
-  const [language, setLanguage] = useState(languageOptions[0])
-  const router = useRouter()
+  const [language, setLanguage] = useState(languageOptions[0]);
+  const [invites,setInvites] = useState();
+  const [invitedProjects, setInvitedProjects] = useState();
+  const router = useRouter();
+  const session = useSession();
   const onSelectChange = (
     sl: SetStateAction<{
       id: number
@@ -147,13 +151,18 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
         console.log(error)
     })
   }
-  if((new Date(session.data?.expires)) < (new Date(Date.now()))){
+  if((new Date(session?.data?.expires)) < (new Date(Date.now()))){
     signOut();
   }
   if(!session)
 {
   router.push("/auth/login")
 }
+
+
+
+
+
   return (
     <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
       <Bsidebar id={id} />
@@ -205,6 +214,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                 </div>
               </div>
               <div className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
+                
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
                     <HoverEffect items={projects} />
