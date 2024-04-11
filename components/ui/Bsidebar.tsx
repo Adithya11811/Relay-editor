@@ -53,6 +53,7 @@ import {
   CardHeader,
   CardTitle,
 } from './card'
+import { AlertDialog, AlertDialogContent, AlertDialogCancel, AlertDialogAction } from './alert-dialog';
 
 interface ProfileProps {
   id: string
@@ -127,7 +128,12 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
       accountId: '',
     },
   })
-
+  let invicnt;
+  if(invitations === undefined){
+    invicnt = 0;
+  }else{
+    invicnt = invitations.length
+  }
   const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
     values.lang = language.value
     values.accountId = account?.id
@@ -175,7 +181,7 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
 
 
 
-  const handleAcceptInvitation = (id)=>{
+  const handleAcceptInvitation = (id : string)=>{
     axios.post("/api/acceptInvitation", { id })
       .then((response) => {
         console.log(response)
@@ -186,7 +192,7 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
           console.log(error)
       })
   }
-    const handleDeclineInvitation = (id)=>{
+    const handleDeclineInvitation = (id :string)=>{
     axios.post("/api/rejectInvitation", { id })
       .then((response) => {
         console.log(response)
@@ -202,27 +208,50 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
           <Link className="flex items-center gap-2 font-semibold" href="#">
             <span className="text-xl">Relay</span>
           </Link>
-          {invitations.length > 0 && (
-            <Button
-              className="ml-auto h-10 w-10 rounded-full"
-              size="icon"
-              variant="ghost"
-              onClick={() => setShowInvitationDialog(true)}
-            >
-              <IoIosNotifications size={30} />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
-          )}
-          {showInvitationDialog && (
+          {/* {invitations.length > 0 && ( */}
+          <Button
+            className="ml-auto h-9 w-9 rounded-full"
+            size="icon"
+            variant="runner"
+            onClick={() => setShowInvitationDialog(true)}
+          >
+            <IoIosNotifications size={20} />
+
+            <span className="sr-only">Toggle notifications</span>
+          </Button>
+          <div className="w-2 h-2 flex justify-center items-center bottom-2 right-[14px] relative text-white  text-[10px] rounded-full">
+            {invicnt > 9 ? '9+' : invicnt}
+          </div>
+          {/* )} */}
+          {/* {invitations.length == 0 && (
+            <AlertDialog open={true} onOpenChange={setShowInvitationDialog}>
+              <AlertDialogContent className='bg-gray-800'>
+                NO Invitations yet
+                <AlertDialogAction>Ok</AlertDialogAction>
+              </AlertDialogContent>
+            </AlertDialog>
+          )} */}
+          {invicnt > 0 && showInvitationDialog && (
             <Dialog open={true} onOpenChange={setShowInvitationDialog}>
               <DialogContent className="w-fit flex flex-col justify-center items-center">
                 <h2 className="text-2xl font-semibold mb-4">Invitations</h2>
                 {invitations.map((invitation, index) => (
                   <div key={index} className="my-2 text-black">
-                    <p>You are invited to {invitedProjects[index]} by {sender[index]}</p>
+                    <p>
+                      You are invited to {invitedProjects[index]} by{' '}
+                      {sender[index]}
+                    </p>
                     <div className="flex flex-row justify-center items-center space-x-4">
-                    <Button onClick={() => handleAcceptInvitation(invitation.id)}>Accept</Button>
-                    <Button onClick={() => handleDeclineInvitation(invitation.id)}>Decline</Button>
+                      <Button
+                        onClick={() => handleAcceptInvitation(invitation.id)}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        onClick={() => handleDeclineInvitation(invitation.id)}
+                      >
+                        Decline
+                      </Button>
                     </div>
                   </div>
                 ))}

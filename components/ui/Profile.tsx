@@ -57,7 +57,6 @@ interface account {
 }
 
 const Profile: React.FC<ProfileProps> = ({ id }) => {
-  const session = useSession()
   const [account, setAccount] = useState()
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0]);

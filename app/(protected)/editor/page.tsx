@@ -38,6 +38,7 @@ const ProjectsPage = () => {
   const monaco = useMonaco();
   const projectId = params.get('projectId');
   const [account, setAccount] = useState<unknown>(null)
+  const router = useRouter();
 
   const id = AuthProvider();
     useEffect(() => {

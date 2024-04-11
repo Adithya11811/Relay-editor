@@ -1,42 +1,21 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { useTransition } from 'react'
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { getAccountByUserId, getProjetByAccountId } from '@/data/user'
 import { redirect, useRouter } from 'next/navigation'
-import { HoverEffect } from './hoverCard'
-import { Dialog, DialogContent, DialogTrigger } from './dialog'
-import { FaLinkedinIn } from 'react-icons/fa'
-import { FaGithub } from 'react-icons/fa'
-import LanguagesDropdown from '../project/languageDropdown'
 import { languageOptions } from '@/constants/languageOptions'
 import { SetStateAction } from 'react'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from './input'
 import { useForm } from 'react-hook-form'
 import { ProjectSchema } from '@/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import axios from 'axios'
 import Header from './BHeader'
 import Bsidebar from './Bsidebar'
 import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
-import { db } from '@/lib/db'
 import { AuthProvider } from '@/hooks/AuthProvider'
 import ProjectCard from './ProjectCard'
 
-interface ProfileProps {
-  id: string
-}
+
+
 interface projects {
   projectId: string
   projectName: string
@@ -92,8 +71,10 @@ const Projects = () => {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await getAccountByUserId(id)
-        setAccount(response)
+        if(id!== undefined){
+          const response = await getAccountByUserId(id)
+          setAccount(response)
+        }
       } catch (error) {
         console.error('Error fetching account:', error)
       }
@@ -101,7 +82,7 @@ const Projects = () => {
 
     fetchAccount()
   }, [id])
-  const [isPending, startTransition] = useTransition()
+  // const [isPending, startTransition] = useTransition()
   // const [error, setError] = useState<string | undefined>('')
   // const [success, setSuccess] = useState<string | undefined>('')
   const form = useForm<z.infer<typeof ProjectSchema>>({
@@ -117,15 +98,17 @@ const Projects = () => {
   useEffect(() => {
     const fetch_project = async () => {
       try {
-        const response = await getProjetByAccountId(account?.id)
-        setProjects(response)
+        if(account !== undefined){
+          const response = await getProjetByAccountId(account?.id)
+          setProjects(response)
+        }
       } catch (error) {
         console.error('Error fetching account:', error)
       }
     }
     fetch_project()
   }, [account])
-  console.log(projects)
+  // console.log(projects)
   //   const onSubmit = (values: z.infer<typeof ProjectSchema>) => {
   //     values.lang = language.value
   //     values.accountId = account?.id
