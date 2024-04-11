@@ -1,3 +1,4 @@
+import Link from 'next/link'
 interface HeaderProps{
     label:string;
 }
@@ -6,10 +7,10 @@ interface HeaderProps{
 export const Header = ({label}:HeaderProps)=>{
     return(
         <div className="w-full flex flex-col items-center justify-center">
-            <h1 className="text-3xl font-semibold">Relay-Editor</h1>
-            <p className="text-muted-foreground text-sm">
+            <Link href='/' className="text-3xl font-semibold">Relay-Editor</Link>
+            <div className=" text-sm text-green-500">
                 {label}
-            </p>
+            </div>
         </div>
     )   
 }

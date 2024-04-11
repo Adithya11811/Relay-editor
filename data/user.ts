@@ -32,3 +32,28 @@ export const getAccountByUserId = async (userId: string) => {
     return e;
   }
 };
+
+export const getProjetByAccountId = async (Id: string) => {
+  try {
+    const account = await db.project.findMany({
+      where: { creator: Id },
+      orderBy: { updated_at: 'desc' },
+    })
+    return account
+  } catch (e) {
+    return e
+  }
+}
+
+export const getAccountByAccountName = async(name: string) => {
+  try {
+    const account = await db.account.findFirst({
+      where: {
+        username: name
+      }
+    })
+    return account
+  }catch(e){
+    return e
+  }
+}

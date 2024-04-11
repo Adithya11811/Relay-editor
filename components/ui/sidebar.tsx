@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Form } from './form';
+import { FaFolderOpen } from 'react-icons/fa'
 import { useRouter } from 'next/navigation';
 
 interface SideBarProps {
@@ -61,20 +62,37 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
   };
 
   return (
-    <div className="hover:border hover:border-green-600 p-2 bg-gray-800/40 text-md w-72">
+    <div className="hover:border hover:border-green-600 p-2 bg-gray-800/40 text-md w-80">
       <div className="m-2">
-        <Button variant="runner" className="text-center w-full" onClick={() => setOpen(true)}>+ File</Button>
+        <Button
+          variant="runner"
+          className="text-center w-full"
+          onClick={() => setOpen(true)}
+        >
+          + File
+        </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-          </DialogTrigger>
+          <DialogTrigger asChild></DialogTrigger>
           <DialogContent>
             <button className="absolute top-1 right-2 text-gray-500 hover:text-gray-700 focus:outline-none">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
             <div className="flex flex-col items-start">
-              <h3 className="text-lg font-semibold mb-2">Enter new file name:</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Enter new file name:
+              </h3>
               <input
                 type="text"
                 value={newFileName}
@@ -95,9 +113,13 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
         </Dialog>
       </div>
       <div className="flex mx-2 flex-col justify-start items-start">
-        <h2>{project?.projectName}</h2>
+        <h2 className='flex mt-4 items-center justify-center gap-2'>
+          <FaFolderOpen />
+          {project?.projectName}
+        </h2>
+        {/* Display other project details if needed */}
       </div>
-      <div className="file-list ml-4">
+      <div className="file-list pl-10">
         <ul>
           {files.map((file: any) => (
             <li
@@ -111,5 +133,5 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
         </ul>
       </div>
     </div>
-  );
+  )
 };

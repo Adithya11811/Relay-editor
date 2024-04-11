@@ -6,10 +6,12 @@ import { LogoutButton } from "../auth/logout-button"
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover"
 interface profileProps {
     imgUrl: string
+    proj: true | false
     message:string
 }
 
-const Header: React.FC<profileProps> = ({imgUrl,message}) => {
+const Header: React.FC<profileProps> = ({imgUrl,message, proj}) => {
+
   return (
     <header className="flex h-14 lg:h-[60px] items-center gap-4 px-6 bg-gray-800/40">
       <Link
@@ -20,14 +22,18 @@ const Header: React.FC<profileProps> = ({imgUrl,message}) => {
       </Link>
       <nav className=" flex flex-1 gap-2 lg:gap-4 justify-center text-sm">
         <Link
-          className=" hidden lg:flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 bg-slate-800 tracking-wide transition-all text-gray-400 hover:text-gray-50"
-          href="#"
+          className={`hidden lg:flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 tracking-wide transition-all text-gray-400 ${
+            !proj ? 'bg-slate-800 hover:text-gray-50' : 'hover:text-gray-50'
+          }`}
+          href="/profile"
         >
           Profile
         </Link>
         <Link
-          className="flex items-center gap-2 rounded-lg hover:scale-105  px-3 py-2 tracking-wide transition-all text-gray-400 hover:text-gray-50"
-          href="#"
+          className={`flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 tracking-wide transition-all text-gray-400 ${
+            proj ? 'bg-slate-800 hover:text-gray-50' : ''
+          }`}
+          href="/projects"
         >
           Projects
         </Link>

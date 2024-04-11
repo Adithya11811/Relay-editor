@@ -1,30 +1,12 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-// import {
-//   DropdownMenuTrigger,
-//   DropdownMenuLabel,
-//   DropdownMenuSeparator,
-//   DropdownMenuItem,
-//   DropdownMenuContent,
-//   DropdownMenu,
-// } from '@/components/ui/dropdown-menu'
 import { useTransition } from 'react'
 import { useEffect, useState } from 'react'
-import { BellIcon, Router, SettingsIcon } from 'lucide-react'
-import { RiUserFollowFill } from 'react-icons/ri'
-import { GrProjects } from 'react-icons/gr'
-// import { Avatar, AvatarImage, AvatarFallback } from './avatar'
-// import { GitHubLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-// import { useCurrentUser } from '@/hooks/use-current-user'
-// import { LogoutButton } from '../auth/logout-button'
 import { getAccountByUserId } from '@/data/user'
-// import { AuthProvider } from '@/hooks/AuthProvider'
 import { redirect, useRouter } from 'next/navigation'
 import { HoverEffect } from './hoverCard'
 import { Dialog, DialogContent, DialogTrigger } from './dialog'
-import { FaPlus } from 'react-icons/fa'
-import { IoIosNotifications } from 'react-icons/io'
 import { FaLinkedinIn } from 'react-icons/fa'
 import { FaGithub } from 'react-icons/fa'
 import LanguagesDropdown from '../project/languageDropdown'
@@ -45,7 +27,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import axios from 'axios'
 import Header from './BHeader'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card'
 import Bsidebar from './Bsidebar'
 import { signOut, useSession } from 'next-auth/react'
 
@@ -76,6 +57,7 @@ interface account {
 }
 
 const Profile: React.FC<ProfileProps> = ({ id }) => {
+  const session = useSession()
   const [account, setAccount] = useState()
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0]);
@@ -168,7 +150,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
       <Bsidebar id={id} />
 
       <div className="flex flex-col">
-        <Header imgUrl={account?.profileImage} />
+        <Header imgUrl={account?.profileImage} proj={false}/>
         <div className="w-full  bg-grid-white/[0.2] relative flex items-center justify-center">
           {/* Radial gradient for the container to give a faded look */}
           <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black)]"></div>
@@ -219,7 +201,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                   <DialogTrigger className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
                     <HoverEffect items={projects} />
                   </DialogTrigger>
-                  <DialogContent className="w-50 flex flex-col justify-center items-center">
+                  <DialogContent className="w-50 flex flex-col justify-center items-center bg-gray-800 text-green-500">
                     <Form {...form}>
                       <form
                         onSubmit={form.handleSubmit(onSubmit)}
@@ -233,7 +215,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                             render={({ field }) => {
                               return (
                                 <FormItem>
-                                  <FormLabel className="text-black">
+                                  <FormLabel className="">
                                     Project Name:
                                   </FormLabel>
                                   <FormControl>
@@ -242,7 +224,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                                       disabled={isPending}
                                       placeholder=""
                                       type="text"
-                                      className='text-black'
+                                      className='text-white'
                                     />
                                   </FormControl>
                                   <FormMessage />
@@ -256,7 +238,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                             render={({ field }) => {
                               return (
                                 <FormItem>
-                                  <FormLabel className="text-black">
+                                  <FormLabel className="">
                                     Project description:
                                   </FormLabel>
                                   <FormControl>
@@ -265,7 +247,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                                       disabled={isPending}
                                       placeholder="Interactive project"
                                       type="text"
-                                      className='text-black'
+                                      className='text-white'
                                     />
                                   </FormControl>
                                   <FormMessage />

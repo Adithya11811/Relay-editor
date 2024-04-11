@@ -31,6 +31,7 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { error } from "console";
 
+import { useRouter } from "next/navigation";
 
 const ProjectsPage = () => {
   const params = useSearchParams();
@@ -146,7 +147,7 @@ useEffect(() => {
     };
 
   return (
-    <div className="flex flex-col justify-center align-middle">
+    <div className="flex flex-col justify-center align-middle overflow-y-clip">
       <div className="h-[10vh]">
         <header className="flex h-14 lg:h-[60px] items-center gap-4 px-6 bg-gray-800/40">
           <nav className="hidden lg:flex lg:flex-1 lg:gap-4 lg:justify-start lg:text-sm">
@@ -160,13 +161,13 @@ useEffect(() => {
               variant={'link'}
               className="rounded-lg px-3 hover:scale-110 lg:mx-24 py-2 flex items-center gap-2 border-slate-700 border transition-all text-gray-400 hover:text-gray-50"
             >
-              <Link
+              <div
                 className="flex items-center gap-2 justify-center  transition-all text-gray-400 hover:text-gray-50"
-                href="/profile"
+                onClick={() => router.back()}
               >
                 <ArrowLeft size={20} strokeWidth={0.5} />
                 back
-              </Link>
+              </div>
             </Button>
             <Button
               onClick={run}
@@ -189,19 +190,13 @@ useEffect(() => {
                 'Run'
               )}
             </Button>
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger className="lg:-mx-32 border flex hover:scale-110 items-center gap-2 justify-center rounded-lg px-3 bg-transparent border-slate-700 text-gray-400 hover:text-gray-50">
-                {/* <Button
-                  variant={'link'}
-                  className="border bg-transparent border-slate-700 text-gray-400 hover:text-gray-50"
-                > */}
                 <FaTools />
                 Performance
-                {/* </Button> */}
               </PopoverTrigger>
               <PopoverContent>Hello</PopoverContent>
-            </Popover>
-            
+            </Popover> */}
           </nav>
           <Button variant="runner" className="text-center w-fit" onClick={() => setOpenInvite(true)}>Invite</Button>
           <Dialog open={openInvite} onOpenChange={setOpenInvite}>
@@ -271,7 +266,16 @@ useEffect(() => {
         {/* <Header imgUrl={account?.profileImage} /> */}
       </div>
       <div className="flex flex-row justify-end">
-        <SideBar files={files} setFilename={setFilename}  project={project} setExtension={setExtension} extension={extension} setFileContent={setFileContent} setCode={setCode} fileContents={fileContent} />
+        <SideBar
+          files={files}
+          setFilename={setFilename}
+          project={project}
+          setExtension={setExtension}
+          extension={extension}
+          setFileContent={setFileContent}
+          setCode={setCode}
+          fileContents={fileContent}
+        />
         <div className="overlay overflow-clip w-full h-full bg-[#2a2828]">
           <Editor
             height="90vh"

@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { writeFile, unlink } from "fs/promises"; // Use promises version of fs
 import path from 'path';
 import { db } from "@/lib/db";
+import fs from 'fs'
 
 // Define enum for project types
 enum ProjectType {
@@ -18,6 +19,9 @@ export async function POST(request: NextRequest) {
     const reqBody = await request.json();
     const validatedFields = ProjectSchema.safeParse(reqBody);
     const cwd = process.cwd();
+    const C_starter = fs.readFileSync(`${cwd}/public/starter/cstarter.txt`, 'utf-8')
+    // console.log(C_starter)
+    const Cpp_starter = fs.readFileSync(`${cwd}/public/starter/cppstarter.txt`, 'utf-8')
 
     if (!validatedFields.success) {
         return NextResponse.json({
@@ -43,14 +47,20 @@ export async function POST(request: NextRequest) {
     // Define placeholder text based on file extension
     let placeholderText = '';
     switch (extension) {
-        case 'py':
-            placeholderText = '# Write your Python code here';
-            break;
-        case 'js':
-            placeholderText = '// Write your JavaScript code here';
-            break;
-        default:
-            placeholderText = '// Write your code here';
+      case 'py':
+        placeholderText = '# Write your Python code here'
+        break
+      case 'js':
+        placeholderText = '// Write your JavaScript code here'
+        break
+      case 'c':
+        placeholderText = C_starter
+        break
+      case 'cpp':
+        placeholderText = Cpp_starter
+        break
+      default:
+        placeholderText = '// Write your code here'
     }
 
     const folderPath = path.resolve(cwd, "temp");

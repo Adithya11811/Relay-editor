@@ -11,7 +11,7 @@ const LanguagesDropdown = ({ onSelectChange }:any) => {
       styles={customStyles}
       defaultValue={languageOptions[0]}
       onChange={(selectedOption) => onSelectChange(selectedOption)}
-      
+      className="bg-gray-600 text-green-500"
     />
   );
 };

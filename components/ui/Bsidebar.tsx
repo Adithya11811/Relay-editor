@@ -243,11 +243,11 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
                 <FaPlus />
                 Create Project
               </DialogTrigger>
-              <DialogContent className="w-50 flex flex-col justify-center items-center text-black">
+              <DialogContent className="w-50 flex flex-col justify-center items-center text-green-500 bg-gray-800">
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-2 text-black"
+                    className="space-y-2 "
                   >
                     <LanguagesDropdown onSelectChange={onSelectChange} />
                     <div className=" space-y-6 m-2">
@@ -264,6 +264,7 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
                                   disabled={isPending}
                                   placeholder=""
                                   type="text"
+                                  className="text-white"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -284,6 +285,7 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
                                   disabled={isPending}
                                   placeholder="Interactive project"
                                   type="text"
+                                  className="text-white"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -305,19 +307,19 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
             </Dialog>
             <Link
               className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
-              href="#"
+              href="/projects"
             >
               <GrProjects />
               Projects
             </Link>
 
-            <Link
+            {/* <Link
               className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
               href="#"
             >
               <RiUserFollowFill />
               Follow
-            </Link>
+            </Link> */}
             <Link
               className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
               href="#"

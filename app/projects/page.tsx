@@ -1,6 +1,9 @@
-// 'use client'
+'use client'
 // import React from 'react'
 // import { useVoiceToText } from 'react-speakup'
+
+import Projects from '@/components/ui/projects'
+import { AuthProvider } from '@/hooks/AuthProvider'
 
 // interface Options {
 //   lang: string
@@ -24,5 +27,17 @@
 //   )
 // }
 
-// export default VoiceToTextComponent 
-
+// export default VoiceToTextComponent
+const page = () => {
+  const id = AuthProvider()
+  if (id === undefined) {
+    return <div>Loader</div>
+  } else {
+    return (
+      <div>
+        <Projects />
+      </div>
+    )
+  }
+}
+export default page
