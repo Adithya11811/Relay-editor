@@ -145,11 +145,11 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
 
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
-      <Bsidebar id={id} />
+    // <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
+    //   <Bsidebar id={id} />
 
-      <div className="flex flex-col">
-        <Header imgUrl={account?.profileImage} proj={false}/>
+    //   <div className="flex flex-col">
+    //     <Header imgUrl={account?.profileImage} proj={false}/>
         <div className="w-full  bg-grid-white/[0.2] relative flex items-center justify-center">
           {/* Radial gradient for the container to give a faded look */}
           <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black)]"></div>
@@ -270,8 +270,8 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
             </main>
           </div>
         </div>
-      </div>
-    </div>
+    //   </div>
+    // </div>
   )
 }
 

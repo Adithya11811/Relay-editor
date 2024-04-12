@@ -1,8 +1,11 @@
+'use client';
 import Link from "next/link"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu"
 import { Button } from "./button"
 import Image from "next/image"
 import { LogoutButton } from "../auth/logout-button"
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 interface profileProps {
     imgUrl: string
@@ -11,41 +14,52 @@ interface profileProps {
 }
 
 const Header: React.FC<profileProps> = ({imgUrl, proj}) => {
-
+  const router = useRouter()
   return (
     <header className="flex h-14 lg:h-[60px] items-center gap-4 px-6 bg-gray-800/40">
-      <Link
-        className="lg:hidden flex items-center gap-2 font-semibold"
-        href="#"
-      >
-        <span className="">Relay Editor</span>
-      </Link>
-      {typeof proj !== 'string' &&
-      <nav className=" flex flex-1 gap-2 lg:gap-4 justify-center text-sm">
-        <Link
-          className={`hidden lg:flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 tracking-wide transition-all text-gray-400 ${
-            !proj ? 'bg-slate-800 hover:text-gray-50' : 'hover:text-gray-50'
-          }`}
-          href="/profile"
-        >
-          Profile
+        <Link className="lg:hidden flex items-center gap-2 font-semibold" href="#">
+          <span className="">Relay</span>
         </Link>
-        <Link
-          className={`flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 tracking-wide transition-all text-gray-400 ${
-            proj ? 'bg-slate-800 hover:text-gray-50' : ''
-          }`}
-          href="/projects"
+      {typeof proj !== 'string' && (
+        <nav className=" flex flex-1 gap-2 lg:gap-4 justify-center text-sm">
+          <Link
+            className={`hidden lg:flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 tracking-wide transition-all text-gray-400 ${
+              !proj ? 'bg-slate-800 hover:text-gray-50' : 'hover:text-gray-50'
+            }`}
+            href="/profile"
+          >
+            Profile
+          </Link>
+          <Link
+            className={`flex items-center gap-2 rounded-lg hover:scale-105 px-3 py-2 tracking-wide transition-all text-gray-400 ${
+              proj ? 'bg-slate-800 hover:text-gray-50' : ''
+            }`}
+            href="/profile/projects"
+          >
+            Projects
+          </Link>
+        </nav>
+      )}
+      {typeof proj === 'string' && (
+        <Button
+          variant={'link'}
+          className="rounded-lg px-3 hover:scale-110 py-2 flex items-center gap-2 border-slate-700 border transition-all text-gray-400 hover:text-gray-50"
         >
-          Projects
-        </Link>
-      </nav>
-      }
+          <div
+            className="flex items-center gap-2 justify-center  transition-all text-gray-400 hover:text-gray-50"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft size={20} strokeWidth={0.5} />
+            back
+          </div>
+        </Button>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          {/* <Popover>
-            <PopoverTrigger className=" border flex hover:scale-110 items-center gap-2 justify-center rounded-full bg-transparent text-gray-400 hover:text-gray-50"> */}
           <Button
-            className="rounded-full border-2 border-green-600 w-8 h-8 dark:border-gray-800"
+            className={`rounded-full border-2 border-green-600 w-8 h-8 dark:border-gray-800 ${
+              typeof proj === 'string' ? 'absolute right-8' : ''
+            }`}
             id="user-menu"
             size="icon"
             variant="ghost"
@@ -63,9 +77,6 @@ const Header: React.FC<profileProps> = ({imgUrl, proj}) => {
             />
             <span className="sr-only">Toggle user menu</span>
           </Button>
-          {/* </PopoverTrigger>
-            <PopoverContent>{message}</PopoverContent>
-          </Popover> */}
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"

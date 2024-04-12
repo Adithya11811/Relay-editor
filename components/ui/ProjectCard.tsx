@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 import { FaJs, FaPython } from 'react-icons/fa'
 import { TbBrandCpp } from 'react-icons/tb'
-import { SiCodio } from 'react-icons/si'
+import { SiCodio, SiTypescript } from 'react-icons/si'
 import {motion} from 'framer-motion'
 import { IoLogoJavascript } from 'react-icons/io'
 
@@ -32,7 +32,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       case 'python':
         return <FaPython />
       default:
-        return null
+        return <SiTypescript />
     }
   }
 

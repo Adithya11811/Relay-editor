@@ -45,21 +45,15 @@ model Account {
   githubLink        String? @default("")
   profileImage      String? @default("")
   banner            String? @default("")
-  type              String
-  provider          String
-  providerAccountId String @default(uuid())
   refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  friends           String[]
+  follow            String[]
   created_at        DateTime @default(now())
   updated_at        DateTime @default(now())
   projects          Project[]               // Adjust the relationship
   user              User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-@@unique([provider,providerAccountId])
 invitation Invitation[]
 collaborators Collaborators[]
 }
@@ -137,8 +131,8 @@ model Invitation {
 }
 
 model Collaborators{
-  id String @id @default(uuid())
   projectId String
   collaborators String
+  @@unique([projectId,collaborators])
   collaborator Account @relation(fields: [collaborators],references: [id])
 }

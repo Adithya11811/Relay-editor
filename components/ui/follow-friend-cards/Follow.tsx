@@ -5,29 +5,18 @@ import {
   getAccountByUserId,
 } from '@/data/user'
 import { useRouter } from 'next/navigation'
-import ProjectCard from './ProjectCard'
+// import ProjectCard from './ProjectCard'
 import { AuthProvider } from '@/hooks/AuthProvider'
+import Fcards from './Fcards'
 
-interface projects {
-  projectId: string
-  projectName: string
-  projectDescription: string
-  projectType: string
-  created_at: Date
-  updated_at: Date
-  creator: string
-}
-
-interface ProjectProps {
+interface FriendProps {
   username?: string
 }
 
-const Projects: React.FC<ProjectProps> = ({ username }) => {
+const Follow: React.FC<FriendProps> = ({ username }) => {
   const [account, setAccount] = useState<any>()
-  const [projects, setProjects] = useState<Array<projects>>([])
-  const router = useRouter()
   const id = AuthProvider()
-
+    console.log(id)
   useEffect(() => {
     const fetchAccount = async () => {
       try {
@@ -45,32 +34,21 @@ const Projects: React.FC<ProjectProps> = ({ username }) => {
 
     fetchAccount()
   }, [username, id])
-
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        if (account?.id) {
-          const response = await getProjetByAccountId(account.id)
-          setProjects(response)
-        }
-      } catch (error) {
-        console.error('Error fetching projects:', error)
-      }
-    }
-
-    fetchProject()
-  }, [account])
-
+//   console.log(username)
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
       <div className="grid items-start justify-center gap-4">
         <div className="flex items-center justify-center gap-2 md:gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {projects?.length === 0 ? (
-              <div>No Projects have been created</div>
+            {account?.follow?.length === 0 ? (
+              <div>
+                {typeof username !== 'string'
+                  ? 'You have no-one following you'
+                  : 'follow them'}
+              </div>
             ) : (
-              projects?.map((project, index) => (
-                <ProjectCard key={index} project={project} />
+              account?.follow?.map((friendsid: string, index: string) => (
+                <Fcards key={index} fid={friendsid} />
               ))
             )}
           </div>
@@ -80,4 +58,4 @@ const Projects: React.FC<ProjectProps> = ({ username }) => {
   )
 }
 
-export default Projects
+export default Follow

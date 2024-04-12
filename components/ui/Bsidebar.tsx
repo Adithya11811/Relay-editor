@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { CgProfile } from 'react-icons/cg'
 import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
@@ -54,9 +55,12 @@ import {
   CardTitle,
 } from './card'
 import { AlertDialog, AlertDialogContent, AlertDialogCancel, AlertDialogAction } from './alert-dialog';
+import { TbFriends } from 'react-icons/tb';
 
 interface ProfileProps {
   id: string
+  proj : boolean
+  username?: string
 }
 
 interface account {
@@ -81,7 +85,7 @@ interface account {
   username: string
 }
 
-const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
+const Bsidebar: React.FC<ProfileProps> = ({ id, proj, username}) => {
   const [account, setAccount] = useState<unknown>(null)
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0])
@@ -180,7 +184,7 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
   })
 
 
-
+  
   const handleAcceptInvitation = (id : string)=>{
     axios.post("/api/acceptInvitation", { id })
       .then((response) => {
@@ -201,36 +205,35 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
           console.log(error)
       })
   }
+  
   return (
     <div className="hidden  lg:block bg-gray-800/40">
       <div className="flex h-full max-h-screen flex-col">
         <div className="flex h-[60px] items-center  px-6">
-          <Link className="flex items-center gap-2 font-semibold" href="#">
+          <Link className="flex items-center gap-2 font-semibold" href="/profile">
             <span className="text-xl">Relay</span>
           </Link>
-          {/* {invitations.length > 0 && ( */}
-          <Button
-            className="ml-auto h-9 w-9 rounded-full"
-            size="icon"
-            variant="runner"
-            onClick={() => setShowInvitationDialog(true)}
-          >
-            <IoIosNotifications size={20} />
-
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
-          <div className="w-2 h-2 flex justify-center items-center bottom-2 right-[14px] relative text-white  text-[10px] rounded-full">
-            {invicnt > 9 ? '9+' : invicnt}
-          </div>
-          {/* )} */}
-          {/* {invitations.length == 0 && (
-            <AlertDialog open={true} onOpenChange={setShowInvitationDialog}>
-              <AlertDialogContent className='bg-gray-800'>
-                NO Invitations yet
-                <AlertDialogAction>Ok</AlertDialogAction>
-              </AlertDialogContent>
-            </AlertDialog>
-          )} */}
+          {!proj && (
+            <div>
+              <Button
+                className="ml-auto h-9 w-9 relative z-1 left-20 rounded-full"
+                size="icon"
+                variant="runner"
+                onClick={() => setShowInvitationDialog(true)}
+              >
+                <div className="relative left-1">
+                  <IoIosNotifications size={20} />
+                </div>
+                <span className="sr-only">Toggle notifications</span>
+                <div className="w-2 h-2 flex justify-center items-center bottom-[6px] z-2 relative text-white  text-[10px] rounded-full">
+                  {invicnt > 9 ? '9+' : invicnt}
+                </div>
+              </Button>
+              {/* <div className="w-2 h-2 flex justify-center items-center right-44 z-10 relative text-white  text-[10px] rounded-full">
+                {invicnt > 9 ? '9+' : invicnt}
+              </div> */}
+            </div>
+          )}
           {invicnt > 0 && showInvitationDialog && (
             <Dialog open={true} onOpenChange={setShowInvitationDialog}>
               <DialogContent className="w-fit flex flex-col justify-center items-center">
@@ -260,104 +263,149 @@ const Bsidebar: React.FC<ProfileProps> = ({ id}) => {
           )}
         </div>
         <div className="flex-1 overflow-clip py-2">
-          <nav className="grid items-start pl-4 text-sm font-medium">
-            <Link
-              className="flex items-center gap-3 rounded-lg  py-2  transition-all  text-gray-400 hover:text-gray-50"
-              href="#"
-            >
-              Home
-            </Link>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger className="flex items-center gap-3 rounded-lg py-2 transition-all  text-gray-400 hover:text-gray-50">
-                <FaPlus />
-                Create Project
-              </DialogTrigger>
-              <DialogContent className="w-50 flex flex-col justify-center items-center text-green-500 bg-gray-800">
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-2 "
-                  >
-                    <LanguagesDropdown onSelectChange={onSelectChange} />
-                    <div className=" space-y-6 m-2">
-                      <FormField
-                        control={form.control}
-                        name="pname"
-                        render={({ field }) => {
-                          return (
-                            <FormItem>
-                              <FormLabel>Project Name:</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={isPending}
-                                  placeholder=""
-                                  type="text"
-                                  className="text-white"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )
-                        }}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="pdescp"
-                        render={({ field }) => {
-                          return (
-                            <FormItem>
-                              <FormLabel>Project description:</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={isPending}
-                                  placeholder="Interactive project"
-                                  type="text"
-                                  className="text-white"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )
-                        }}
-                      />
-                    </div>
-                    <Button
-                      disabled={isPending}
-                      type="submit"
-                      className="w-full"
+          {!proj && (
+            <nav className="grid items-start mt-10 pl-6 text-sm font-medium">
+              <Link
+                className="flex items-center gap-3 rounded-lg  py-2  transition-all  text-gray-400 hover:text-gray-50"
+                href="/profile"
+              >
+                <CgProfile />
+                Home
+              </Link>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger className="flex items-center gap-3 rounded-lg py-2 transition-all  text-gray-400 hover:text-gray-50">
+                  <FaPlus />
+                  Create Project
+                </DialogTrigger>
+                <DialogContent className="w-50 flex flex-col justify-center items-center text-green-500 bg-gray-800">
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-2 "
                     >
-                      Submit
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-            <Link
-              className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
-              href="/projects"
-            >
-              <GrProjects />
-              Projects
-            </Link>
+                      <LanguagesDropdown onSelectChange={onSelectChange} />
+                      <div className=" space-y-6 m-2">
+                        <FormField
+                          control={form.control}
+                          name="pname"
+                          render={({ field }) => {
+                            return (
+                              <FormItem>
+                                <FormLabel>Project Name:</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={isPending}
+                                    placeholder=""
+                                    type="text"
+                                    className="text-white"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )
+                          }}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="pdescp"
+                          render={({ field }) => {
+                            return (
+                              <FormItem>
+                                <FormLabel>Project description:</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={isPending}
+                                    placeholder="Interactive project"
+                                    type="text"
+                                    className="text-white"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      </div>
+                      <Button
+                        disabled={isPending}
+                        type="submit"
+                        className="w-full"
+                      >
+                        Submit
+                      </Button>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
+              <Link
+                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
+                href="/profile/projects"
+              >
+                <GrProjects />
+                Projects
+              </Link>
 
-            {/* <Link
-              className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
-              href="#"
-            >
-              <RiUserFollowFill />
-              Follow
-            </Link> */}
-            <Link
-              className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
-              href="#"
-            >
-              <SettingsIcon className="h-4 w-4" />
-              Settings
-            </Link>
-          </nav>
+              <Link
+                className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
+                href="/profile/follow"
+              >
+                <RiUserFollowFill />
+                Follow
+              </Link>
+              <Link
+                className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
+                href="/profile/friends"
+              >
+                <TbFriends />
+                Friends
+              </Link>
+              <Link
+                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
+                href="#"
+              >
+                <SettingsIcon className="h-4 w-4" />
+                Settings
+              </Link>
+            </nav>
+          )}
+          {proj && (
+            <nav className="grid items-start mt-10 pl-6 text-sm font-medium">
+              <Link
+                className="flex items-center gap-3 rounded-lg  py-2  transition-all  text-gray-400 hover:text-gray-50"
+                href={`/${username}`}
+              >
+                <CgProfile size={16} />
+                Profile
+              </Link>
+
+              <Link
+                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
+                href={`/${username}/projects`}
+              >
+                <GrProjects />
+                Projects
+              </Link>
+
+              <Link
+                className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
+                href={`/${username}/follow`}
+              >
+                <RiUserFollowFill />
+                Follow
+              </Link>
+              <Link
+                className="flex items-center gap-3 rounded-lg py-2 transition-all text-gray-400 hover:text-gray-50"
+                href={`/${username}/friends`}
+              >
+                <TbFriends />
+                Friends
+              </Link>
+            </nav>
+          )}
         </div>
+
         {/* <div className="mt-auto p-4">
             <Card>
               <CardHeader className="pb-4">

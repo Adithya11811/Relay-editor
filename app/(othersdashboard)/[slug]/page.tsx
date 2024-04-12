@@ -1,4 +1,5 @@
-'use client';
+'use client'
+import Others_Profile from '@/components/ui/OthersProfile'
 import { getAccountByAccountName } from '@/data/user'
 import { AuthProvider } from '@/hooks/AuthProvider'
 import { redirect, usePathname, useRouter } from 'next/navigation'
@@ -32,14 +33,14 @@ const Page = () => {
     }
 
     if (account?.userId === undefined || id === undefined) {
-      return 
+      return
     }
 
     if (account.userId === id) {
       redirect('/profile')
     } else {
       console.log(account)
-      if(account === null){
+      if (account === null) {
         router.push('/1/404')
       }
     }
@@ -48,12 +49,16 @@ const Page = () => {
   if (!isLoaded || id === undefined) {
     return <div>Loader....</div>
   }
-  if(account === null){
+  if (account === null) {
     router.push('/1/404')
   }
-  
-  return <div>Hello: {account?.id}</div>
+
+  return (
+    <div>
+      {/* Hello: {account?.id} */}
+      <Others_Profile account={account} />
+    </div>
+  )
 }
 
 export default Page
-
