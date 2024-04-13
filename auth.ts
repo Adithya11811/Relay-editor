@@ -44,8 +44,6 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
-      // Allow OAuth without email verification
-      if (account?.provider !== "credentials") return true;
 
       const existingUser = await getUserById(user.id as string);
 
@@ -80,8 +78,8 @@ async session({ token, session }) {
   }
 
   const account = await getAccountByUserId(session.user.id);
-  if (account?.access_token) {
-    session.user.accessToken = account?.access_token;
+  if (account && account.access_token) {
+    session.user.accessToken = account.access_token;
   }
 
   return session;

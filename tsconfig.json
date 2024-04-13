@@ -35,7 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "components/editor/file-tree.ysx", "components/3d/screens.jsx"  ],
+, "components/editor/file-tree.ysx", "components/3d/screens.jsx","app/api/code.ts"  ],
   "exclude": [
     "node_modules",
     ".next"
