@@ -25,13 +25,13 @@ import Link from "next/link";
 export const LoginForm = () => {
     const searchParams = useSearchParams();
     const urlError = searchParams.get("error") ==="OAuthAccountNotLinked"?"Email Already use with different provider":"";
-
+    const router = useRouter();
 
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
-    
+    const [loggingIn, setLoggingIn] = useState(false);
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -43,16 +43,18 @@ export const LoginForm = () => {
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         setError("");
         setSuccess("");
-        startTransition(() => {
-            axios.post('/api/auth/login', values)
+        axios.post('/api/auth/login', values)
                 .then((response) => {
+                    
                     if(response?.data.error) {
                         form.reset();
                         setError(response.data.error);
                     }
-                    if(response?.data.success) {
+                    if(response?.status === 200) {
                         form.reset();
                         setSuccess(response.data.success);
+                        router.refresh();
+                        router.push('/profile');
                     }
 
                     if(response?.data.twoFactor) {
@@ -61,9 +63,9 @@ export const LoginForm = () => {
                     }
                 })
                 .catch((error) => {
+                    console.log(error )
                     setError(error.response.data.error);
                 });
-        });
     };
 
     return (

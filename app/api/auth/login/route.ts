@@ -105,11 +105,12 @@ export async function POST(request: NextRequest){
 
     try {
         // Sign in the user with provided credentials
-        await signIn("credentials", {
+        const result = await signIn("credentials", {
             email,
             password,
             redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         })        
+        return NextResponse.json(result);
     } catch (error) {
         // Handle authentication errors
         if (error instanceof AuthError) {

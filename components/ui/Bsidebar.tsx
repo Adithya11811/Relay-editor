@@ -188,7 +188,6 @@ const Bsidebar: React.FC<ProfileProps> = ({ id, proj, username}) => {
   const handleAcceptInvitation = (id : string)=>{
     axios.post("/api/acceptInvitation", { id })
       .then((response) => {
-        console.log(response)
         if(response.data.projectId){
           router.push(`/editor?projectId=${response.data.projectId}`)
         }
@@ -199,7 +198,6 @@ const Bsidebar: React.FC<ProfileProps> = ({ id, proj, username}) => {
     const handleDeclineInvitation = (id :string)=>{
     axios.post("/api/rejectInvitation", { id })
       .then((response) => {
-        console.log(response)
         
       }).catch((error) => {
           console.log(error)

@@ -22,7 +22,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from './input'
-
+import axios from 'axios'
+import { AuthProvider } from '@/hooks/AuthProvider'
+import { signOut } from '@/auth'
 
 interface Others_Profile_props {
   account: account
@@ -51,6 +53,21 @@ interface account {
 }
 
 const Others_Profile: React.FC<Others_Profile_props> = ({ account }) => {
+  const id =AuthProvider();
+  const addFriend = () =>{
+    axios.post("/api/addFriend",{account,id}).then((response)=>{
+        console.log(response)
+    }).catch((error)=>{
+      console.log(error)
+      if (error.response.data.error ==="Not logged In"){
+        signOut();
+      }
+    })
+  }
+
+
+
+
   const [open, setOpen] = useState<boolean | undefined>(false)
   return (
         <div className="w-full  bg-grid-white/[0.2] relative flex items-center justify-center">
@@ -90,7 +107,7 @@ const Others_Profile: React.FC<Others_Profile_props> = ({ account }) => {
                       </div>
 
                     </div>
-                    <Button>
+                    <Button onClick={addFriend}>
                       Add friend
                     </Button>
                   </div>

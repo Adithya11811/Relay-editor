@@ -1,9 +1,8 @@
 "use client"
 import { Editor, useMonaco } from "@monaco-editor/react";
 import { SideBar } from "@/components/ui/sidebar";
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import axios from "axios";
-import { languageOptions } from "@/constants/languageOptions";
 import OutputWindow from "@/components/project/outputWindow";
 import { useSearchParams } from "next/navigation";
 // import Header from "@/components/ui/EHeader";
@@ -22,16 +21,11 @@ import { Button } from '@/components/ui//button'
 import Image from 'next/image'
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ArrowLeft } from "lucide-react";
-import { FaTools } from 'react-icons/fa'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { error } from "console";
 
 import { useRouter } from "next/navigation";
+import supabase from "@/utils/supabase";
 
 const ProjectsPage = () => {
   const params = useSearchParams();
@@ -69,6 +63,7 @@ const ProjectsPage = () => {
   const [extension, setExtension] = useState("")
   const [username,setUsername] = useState("")
   const [invitingUser,setInvitingUser] = useState(false)
+
 
   useEffect(() => {
     // Load and apply the theme
@@ -110,7 +105,6 @@ useEffect(() => {
         setFileContent(code)
         axios.post("/api/save", { code,fileName,files, project })
           .then(response => {
-            console.log(response);
           })
           .catch(error => {
             console.log(error);
@@ -121,7 +115,7 @@ useEffect(() => {
         console.log(error)
         axios.post("/api/save", { code,fileName,files, project })
           .then(response => {
-            console.log(response);
+            
           })
           .catch(error => {
             console.log(error);
@@ -136,16 +130,25 @@ useEffect(() => {
       if(response.status==200)
         setInvitingUser(false);
       setOpenInvite(false);
-      console.log(response)
     }).catch((error)=>{
       console.log(error)
       setInvitingUser(false)
     })
   }
 
-    const handleEditorChange = (value: any) => {
-      setCode(value);
-    };
+const handleEditorChange = (value: any)=>{
+  setCode(value);
+}
+// useEffect(()=>{
+//   supabase.channel(projectId!).on('postgres_changes', {
+//     event: "*",
+//     schema: "public",
+//     table: "Files"
+//   }, (payload: any) => {
+//     console.log(payload)
+//   }).subscribe()
+
+// })
 
   return (
     <div className="flex flex-col justify-center align-middle overflow-y-clip">
@@ -210,7 +213,7 @@ useEffect(() => {
                 </svg>
               </button>
               <div className="flex flex-col items-start">
-                <h3 className="text-lg font-semibold mb-2">Enter new file name:</h3>
+                <h3 className="text-lg font-semibold mb-2">Enter username:</h3>
                 <input
                   type="text"
                   value={username}

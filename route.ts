@@ -8,7 +8,6 @@ export const publicRoutes: string[] = [
   '/auth/new-verification',
   '/auth/createacc',
   '/api/uploadthing',
-  '/profile',
 ]
 
 /**

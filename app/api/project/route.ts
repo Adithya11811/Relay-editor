@@ -1,11 +1,10 @@
 import { ProjectSchema } from "@/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { writeFile, unlink } from "fs/promises"; // Use promises version of fs
 import path from 'path';
 import { db } from "@/lib/db";
 import fs from 'fs'
-
+import supabase from "@/utils/supabase"
 // Define enum for project types
 enum ProjectType {
   Python = 'python',
@@ -33,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const { pname, pdescp, extension, accountId } = validatedFields.data;
 
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+
     let bucket: string | undefined;
 
     const { data, error } = await supabase.storage.createBucket(accountId);

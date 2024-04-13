@@ -8,9 +8,7 @@ import { NextResponse,NextRequest } from "next/server";
 export async function POST(req:NextRequest){
 
     const {token} = await req.json();
-    console.log(token)
     const existingToken = await getVerificatonTokenByToken(token);
-    console.log(existingToken);
     if(!existingToken){
         return NextResponse.json({
             error:"Token does not exist!",
@@ -57,9 +55,7 @@ export async function POST(req:NextRequest){
     }
     const createdAccount =await db.account.create({
         data:{
-            userId:updatedUser.id,
-            provider:"relay-editor",
-            type:"credentials",
+            userId:updatedUser.id 
         }
     })
 
