@@ -19,14 +19,17 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  authModal,
 }: Readonly<{
   children: React.ReactNode
+  authModal: React.ReactNode
 }>) {
   return (
     <SessionProvider>
     <html lang="en">
       <body className={`${space_mono.className}`}>
         {/* <Navbar /> */}
+        {authModal}
         {children}
       </body>
     </html>
