@@ -5,7 +5,6 @@ import {  useEffect, useState } from "react";
 import axios from "axios";
 import OutputWindow from "@/components/project/outputWindow";
 import { useSearchParams } from "next/navigation";
-// import Header from "@/components/ui/EHeader";
 import { AuthProvider } from "@/hooks/AuthProvider";
 import { getAccountByUserId } from "@/data/user";
 import Link from 'next/link'
@@ -25,7 +24,7 @@ import { ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 import { useRouter } from "next/navigation";
-import supabase from "@/utils/supabase";
+import { StarFilledIcon } from "@radix-ui/react-icons";
 
 const ProjectsPage = () => {
   const params = useSearchParams();
@@ -201,15 +200,38 @@ const handleEditorChange = (value: any)=>{
               </PopoverTrigger>
               <PopoverContent>Hello</PopoverContent>
             </Popover> */}
+            {}
+            <Button
+              disabled={!code && !outputDetails?.error}
+              className="border-2 border-green-500 bg-transparent"
+            >
+              <StarFilledIcon />
+              Try Ai
+            </Button>
           </nav>
-          <Button variant="runner" className="text-center w-fit" onClick={() => setOpenInvite(true)}>Invite</Button>
+          <Button
+            variant="runner"
+            className="text-center w-fit"
+            onClick={() => setOpenInvite(true)}
+          >
+            Invite
+          </Button>
           <Dialog open={openInvite} onOpenChange={setOpenInvite}>
-            <DialogTrigger asChild>
-            </DialogTrigger>
+            <DialogTrigger asChild></DialogTrigger>
             <DialogContent>
               <button className="absolute top-2 right-3 text-gray-500 hover:text-gray-700 focus:outline-none">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
               <div className="flex flex-col items-start">
@@ -253,7 +275,7 @@ const handleEditorChange = (value: any)=>{
                 />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
-              </DropdownMenuTrigger>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -265,7 +287,6 @@ const handleEditorChange = (value: any)=>{
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-         
         </header>
         {/* <Header imgUrl={account?.profileImage} /> */}
       </div>

@@ -13,6 +13,11 @@ enum UserRole {
   USER
 }
 
+enum VoteType {
+  UP
+  DOWN
+}
+
 enum ProjectType {
   python
   javascript
@@ -54,8 +59,14 @@ model Account {
   updated_at        DateTime @default(now())
   projects          Project[]               // Adjust the relationship
   user              User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-invitation Invitation[]
-collaborators Collaborators[]
+  invitation Invitation[]
+  collaborators Collaborators[]
+  Post        Post[]
+  Comment     Comment[]
+  CommentVote CommentVote[]
+  subscriptions     Subscription[]
+  votes             Vote[]
+createdSubreddits     Subreddit[]            @relation("CreatedBy")
 }
 
 model VerificationToken {
@@ -135,4 +146,79 @@ model Collaborators{
   collaborators String
   @@unique([projectId,collaborators])
   collaborator Account @relation(fields: [collaborators],references: [id])
+}
+
+
+model Subreddit {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+
+  creatorId   String?    // Adjusted to match the data type of Account's id
+  creator     Account?   @relation("CreatedBy", fields: [creatorId], references: [id]) 
+  subscribers Subscription[]
+
+  @@index([name])
+}
+
+model Subscription {
+  user        Account     @relation(fields: [userId], references: [id])
+  userId      String
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+  subredditId String
+
+  @@id([userId, subredditId])
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  content     Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  author      Account      @relation(fields: [authorId], references: [id])
+  authorId    String
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+  subredditId String
+  comments    Comment[] 
+  votes       Vote[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+  author    Account     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+
+  replyToId String?
+  replyTo   Comment?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[] @relation("ReplyTo")
+
+  votes     CommentVote[]
+  commentId String?
+}
+
+model Vote {
+  user   Account     @relation(fields: [userId], references: [id])
+  userId String
+  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  type   VoteType
+
+  @@id([userId, postId])
+}
+
+model CommentVote {
+  user      Account     @relation(fields: [userId], references: [id])
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  type      VoteType
+
+  @@id([userId, commentId])
 }

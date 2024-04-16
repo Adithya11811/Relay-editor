@@ -6,7 +6,7 @@ import { TbBrandCpp } from 'react-icons/tb'
 import { SiCodio, SiTypescript } from 'react-icons/si'
 import { motion } from 'framer-motion'
 import { IoLogoJavascript } from 'react-icons/io'
-import { getAccountByUserId } from '@/data/user'
+import { getAccountById } from '@/data/user'
 
 interface FriendCardProps {
   fid: string
@@ -14,11 +14,12 @@ interface FriendCardProps {
 
 const Fcards: React.FC<FriendCardProps> = ({ fid }) => {
         const [account, setAccount] = useState()
+        // console.log(fid)
       useEffect(() => {
         const fetchAccount = async () => {
           try {
             if (fid !== undefined) {
-              const response = await getAccountByUserId(fid)
+              const response = await getAccountById(fid)
               setAccount(response)
             }
           } catch (error) {
@@ -28,27 +29,30 @@ const Fcards: React.FC<FriendCardProps> = ({ fid }) => {
 
         fetchAccount()
       }, [fid])
-
+    if(account?.username === undefined){
+      return(<div>Loader</div>)
+    }
   return (
     <Link href={`/${account?.username}`}>
       <motion.div
-        className="bg-gray-800/40 rounded-lg shadow-md p-4 m-4 flex flex-col items-center justify-center w-[200px] hover:border-2 hover:border-green-500"
+        className="bg-gray-800/40 rounded-lg shadow-md p-4 m-4 flex items-center justify-center w-[200px] hover:border-2 gap-3 hover:border-green-500"
         whileHover={{ scale: 1.1, borderColor: '#10B981' }}
         transition={{ duration: 0.5 }}
       >
+        
         <Image
           alt="Avatar"
           className="rounded-full"
-          height="32"
+          height="48"
           src={`${account?.profileImage}` || '/hsec1.jpg'}
           style={{
-            aspectRatio: '32/32',
+            aspectRatio: '48/48',
             objectFit: 'cover',
           }}
-          width="32"
+          width="48"
         />
         <div>
-          <h2 className="text-xl text-green-500 opacity-75 hover:shadow-xl font-semibold">
+          <h2 className="text-sm text-green-500 opacity-75 hover:shadow-xl font-semibold">
             {`${account?.username}`}
           </h2>
         </div>

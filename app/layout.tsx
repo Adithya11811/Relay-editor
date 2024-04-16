@@ -3,6 +3,9 @@ import { Space_Mono } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/ui/navbar'
 import { SessionProvider } from 'next-auth/react'
+import { Toaster } from '@/components/ui/toaster'
+import Providers from '@/components/Providers'
+
 
 const space_mono = Space_Mono({
   weight: ['400', '700'],
@@ -26,13 +29,16 @@ export default async function RootLayout({
 }>) {
   return (
     <SessionProvider>
-    <html lang="en">
-      <body className={`${space_mono.className}`}>
-        {/* <Navbar /> */}
-        {authModal}
-        {children}
-      </body>
-    </html>
+      <html lang="en">
+        <body className={`${space_mono.className}`}>
+          {/* <Navbar /> */}
+          <Providers>
+            {authModal}
+            {children}
+          </Providers>
+          <Toaster />
+        </body>
+      </html>
     </SessionProvider>
   )
 }

@@ -13,7 +13,7 @@ import {
 import { useTransition } from 'react'
 import { useEffect, useState } from 'react'
 import { BellIcon, Router, SettingsIcon } from 'lucide-react'
-import { RiUserFollowFill } from 'react-icons/ri'
+import { RiDiscussFill, RiUserFollowFill } from 'react-icons/ri'
 import { GrProjects } from 'react-icons/gr'
 import { Avatar, AvatarImage, AvatarFallback } from './avatar'
 import { GitHubLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons'
@@ -208,7 +208,10 @@ const Bsidebar: React.FC<ProfileProps> = ({ id, proj, username}) => {
     <div className="hidden  lg:block bg-gray-800/40">
       <div className="flex h-full max-h-screen flex-col">
         <div className="flex h-[60px] items-center  px-6">
-          <Link className="flex items-center gap-2 font-semibold" href="/profile">
+          <Link
+            className="flex items-center gap-2 font-semibold"
+            href="/profile"
+          >
             <span className="text-xl">Relay</span>
           </Link>
           {!proj && (
@@ -358,6 +361,13 @@ const Bsidebar: React.FC<ProfileProps> = ({ id, proj, username}) => {
               >
                 <TbFriends />
                 Friends
+              </Link>
+              <Link
+                className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
+                href="/discussions"
+              >
+                <RiDiscussFill className="h-4 w-4" />
+                Discussions
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
