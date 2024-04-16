@@ -1,5 +1,5 @@
 "use client"
-import { Editor, useMonaco } from "@monaco-editor/react";
+
 import { SideBar } from "@/components/ui/sidebar";
 import {  useEffect, useState } from "react";
 import axios from "axios";
@@ -27,10 +27,11 @@ import { useRouter } from "next/navigation";
 import { useChat } from 'ai/react'
 import { Input } from "@/components/ui/input";
 import GenAiContent from "@/components/GenAiContent";
+import { EditorComponent } from "@/components/project/EditorComponent";
 
 const ProjectsPage = () => {
   const params = useSearchParams();
-  const monaco = useMonaco();
+
   const projectId = params.get('projectId');
   const [account, setAccount] = useState<unknown>(null)
   const router = useRouter();
@@ -67,17 +68,7 @@ const ProjectsPage = () => {
   const { messages, input, handleInputChange, handleSubmit } = useChat()
 
 
-  useEffect(() => {
-    // Load and apply the theme
-    import("monaco-themes/themes/Dracula.json")
-      .then(themeData => {
-        monaco?.editor.defineTheme("dracula", themeData);
-        monaco?.editor.setTheme("dracula");
-      })
-      .catch(error => {
-        console.error("Failed to load Monaco theme:", error);
-      });
-  }, [monaco]);
+  
 
 useEffect(() => {
   axios.post("/api/getProject", { projectId }).then((response) => {
@@ -138,9 +129,7 @@ useEffect(() => {
     })
   }
 
-const handleEditorChange = (value: any)=>{
-  setCode(value);
-}
+
 const [aiflag, setaiflag] = useState(false)
 const handleAiSubmit = ()=>{
   setaiflag(!aiflag)
@@ -326,25 +315,7 @@ const handleAiSubmit = ()=>{
           fileContents={fileContent}
         />
         <div className="overlay overflow-clip w-full h-full bg-[#2a2828]">
-          <Editor
-            height="90vh"
-            width={`100%`}
-            language={language}
-            value={code}
-            theme="dracula"
-            options={{
-              minimap: {
-                enabled: false,
-              },
-              fontSize: 18,
-              // cursorStyle: 'block',
-              wordWrap: 'on',
-              automaticLayout: true,
-              wordBasedSuggestionsOnlySameLanguage: true,
-              cursorBlinking: 'phase',
-            }}
-            onChange={handleEditorChange}
-          />
+          <EditorComponent language={language} code={code}  projectId={projectId} setCode={setCode}/>
         </div>
         <div className="right-container flex flex-shrink-0 w-[30%] flex-col">
           <OutputWindow outputDetails={outputDetails} />
