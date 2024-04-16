@@ -286,7 +286,7 @@ const handleAiSubmit = ()=>{
             </DropdownMenuContent>
           </DropdownMenu>
           {aiflag && (
-            <div className="fixed overflow-y-scroll inset-0 backdrop-blur-sm z-[60]">
+            <div className="fixed inset-0 backdrop-blur-sm z-[60]">
               <div className="container flex justify-center items-center h-full max-w-lg mx-auto">
                 <div className="relative bg-gray-700 w-full h-fit py-8 px-5 rounded-lg">
                   <div className="relative z-2 w-full text-xl text-green-500 -top-5 left-[23rem]">
@@ -301,7 +301,12 @@ const handleAiSubmit = ()=>{
                       />
                     </Button>
                   </div>
-                  <GenAiContent code={code} error = {outputDetails?.error} lang={language}/>
+                  <GenAiContent
+                    profileImage={account?.profileImage}
+                    code={code}
+                    error={outputDetails?.error}
+                    lang={language}
+                  />
                 </div>
               </div>
             </div>
