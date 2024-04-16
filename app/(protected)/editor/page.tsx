@@ -19,12 +19,14 @@ import {
 import { Button } from '@/components/ui//button'
 import Image from 'next/image'
 import { LogoutButton } from "@/components/auth/logout-button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Star, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 import { useRouter } from "next/navigation";
-import { StarFilledIcon } from "@radix-ui/react-icons";
+import { useChat } from 'ai/react'
+import { Input } from "@/components/ui/input";
+import GenAiContent from "@/components/GenAiContent";
 
 const ProjectsPage = () => {
   const params = useSearchParams();
@@ -62,6 +64,7 @@ const ProjectsPage = () => {
   const [extension, setExtension] = useState("")
   const [username,setUsername] = useState("")
   const [invitingUser,setInvitingUser] = useState(false)
+  const { messages, input, handleInputChange, handleSubmit } = useChat()
 
 
   useEffect(() => {
@@ -138,16 +141,10 @@ useEffect(() => {
 const handleEditorChange = (value: any)=>{
   setCode(value);
 }
-// useEffect(()=>{
-//   supabase.channel(projectId!).on('postgres_changes', {
-//     event: "*",
-//     schema: "public",
-//     table: "Files"
-//   }, (payload: any) => {
-//     console.log(payload)
-//   }).subscribe()
-
-// })
+const [aiflag, setaiflag] = useState(false)
+const handleAiSubmit = ()=>{
+  setaiflag(!aiflag)
+}
 
   return (
     <div className="flex flex-col justify-center align-middle overflow-y-clip">
@@ -202,10 +199,11 @@ const handleEditorChange = (value: any)=>{
             </Popover> */}
             {}
             <Button
-              disabled={!code && !outputDetails?.error}
-              className="border-2 border-green-500 bg-transparent"
+              disabled={!code && !!outputDetails?.error}
+              className="border-2  border-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
+              onClick={handleAiSubmit}
             >
-              <StarFilledIcon />
+              <Star className="fill-current text-lg" />
               Try Ai
             </Button>
           </nav>
@@ -287,6 +285,27 @@ const handleEditorChange = (value: any)=>{
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          {aiflag && (
+            <div className="fixed overflow-y-scroll inset-0 backdrop-blur-sm z-[60]">
+              <div className="container flex justify-center items-center h-full max-w-lg mx-auto">
+                <div className="relative bg-gray-700 w-full h-fit py-8 px-5 rounded-lg">
+                  <div className="relative z-2 w-full text-xl text-green-500 -top-5 left-[23rem]">
+                    <Button
+                      variant="runner"
+                      className="h-6 w-6 p-0 rounded-md"
+                      onClick={handleAiSubmit}
+                    >
+                      <X
+                        aria-label="close modal"
+                        className="h-4 w-4 text-white"
+                      />
+                    </Button>
+                  </div>
+                  <GenAiContent code={code} error = {outputDetails?.error} lang={language}/>
+                </div>
+              </div>
+            </div>
+          )}
         </header>
         {/* <Header imgUrl={account?.profileImage} /> */}
       </div>
