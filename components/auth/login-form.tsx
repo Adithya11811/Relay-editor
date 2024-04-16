@@ -53,7 +53,6 @@ export const LoginForm = () => {
                     if(response?.status === 200) {
                         form.reset();
                         setSuccess(response.data.success);
-                        router.refresh();
                         router.push('/profile');
                     }
 
