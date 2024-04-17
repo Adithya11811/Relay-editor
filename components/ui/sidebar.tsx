@@ -34,6 +34,7 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
       setFilename(file.name);
       setFileName(fileBaseName);
       setExtension(fileExt);
+      
       const fileContentKey = `${fileBaseName}_${fileExt}`;
       if (fileContents[fileContentKey]) {
         setCode(fileContents[fileContentKey]);
@@ -44,6 +45,13 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
     } else {
       console.error(`Invalid file name format: ${file.name}`);
     }
+    axios.post("/api/getProject", { projectId }).then((response) => {
+      const fileContentKey = `${fileBaseName}_${fileExt}`;
+      setFileContent(response.data.fileContents)
+      setCode(response.data.fileContents[fileContentKey])
+    }).catch((error) => {
+      console.log(error);
+    });
   };
   
 
