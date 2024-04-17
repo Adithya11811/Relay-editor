@@ -9,7 +9,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa'
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col shrink-0 w-full border-t-2 border-gray-100/90 bg-gray-950 dark:border-gray-950 dark:bg-gray-50">
+    <footer className="flex flex-col shrink-0 w-full border-t-2 border-green-500/20 bg-gray-950 dark:border-gray-950 dark:bg-gray-50">
       <div className="container grid max-w-6xl min-h-[200px] grid-cols-12 items-center gap-4 py-6 text-sm md:gap-8 md:py-10">
         <div className="col-span-12 flex flex-col gap-1">
           <Link
@@ -26,7 +26,7 @@ export default function Footer() {
         <nav className="col-span-12 flex flex-col gap-2 md:flex-row md:col-start-4 md:col-span-2 lg:gap-4 lg:col-start-5 lg:col-span-3 xl:col-start-6 xl:col-span-2">
           <Link
             className="text-gray-100 hover:underline dark:text-gray-900"
-            href="#"
+            href="#about"
           >
             About
           </Link>
@@ -40,7 +40,7 @@ export default function Footer() {
         <div className="col-span-12 flex flex-col gap-2 md:col-start-8 md:col-span-4 lg:col-start-11 lg:col-span-2 xl:col-start-10 xl:col-span-3">
           <div className="flex items-center gap-5">
             <Link
-              className="rounded-xl border bg-white scale-150 border-gray-200 dark:border-gray-800"
+              className="rounded-xl  scale-150 text-white"
               href="https://github.com/Adithya11811/Relay-editor"
             >
               {/* <Image
@@ -57,8 +57,8 @@ export default function Footer() {
               <FaGithub />
             </Link>
             <Link
-              className="rounded-xl border bg-white scale-150 border-gray-200 dark:border-gray-800"
-              href="#"
+              className="rounded-xl  scale-150 text-white"
+              href="https://www.linkedin.com/in/adithya-rao-k/"
             >
               {/* <Image
                 alt="Avatar"

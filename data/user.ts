@@ -175,18 +175,19 @@ export const getHostByProjectID = async (pid: string) => {
   }
 }
 
-// export const getHostByProjectId = async (pid: string) => {
-//   try {
-//     const colabsdata = await db.project.findUnique({
-//       where: {
-//         projectId: pid,
-//       },
-//       include:{
-//         creator: true;
-//       }
-//     })
-//     return colabsdata
-//   } catch (e) {
-//     return e
-//   }
-// }
+export const getsubreditorfromslug = async(id :string, name:string) => {
+  try{
+
+  const subscription = await db.subscription.findFirst({
+    where: {
+      subreddit: {
+        name: name,
+      },
+      userId: id,
+    },
+  })
+  return subscription
+  }catch(e){
+    throw e
+  }
+}
