@@ -17,6 +17,11 @@ export const EditorComponent = ({language,code,projectId,setCode}:Props)=>{
         //     event: 'code-changes',
         //     payload: { message: code },
         // }) 
+        // channel.send({
+        //     type: 'broadcast',
+        //     event: 'code-changes',
+        //     payload: { message: code },
+        // }) 
     }
 //     const channel = supabase.channel(projectId!)
 //     channel.subscribe((status) => {

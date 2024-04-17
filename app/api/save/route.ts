@@ -9,7 +9,8 @@ export async function POST(request: NextRequest) {
     try{
         // Upload the file content to Supabase storage
         for(const file of files){
-                    const { data, error } = await supabase.storage.from(project.creator).upload(file.fileUrl, code, { upsert: true });
+            if(file.name === fileName){
+                const { data, error } = await supabase.storage.from(project.creator).upload(file.fileUrl, code, { upsert: true });
                     // Handle errors during file upload
                     if (error) {
                         return NextResponse.json({
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest) {
                         status: 500
                     });
             }
+        }
         }
 
         // Return success response

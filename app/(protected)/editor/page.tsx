@@ -152,27 +152,29 @@ const ProjectsPage = () => {
       .catch((err) => {
         const error = err.response.data.error
         console.log(error)
-        axios
-          .post('/api/save', { code, fileName, files, project })
-          .then((response) => {})
-          .catch((error) => {
-            console.log(error)
+        axios.post("/api/save", { code,fileName,files, project })
+          .then(response => {
+            
           })
-        setOutputDetails({ output: '', error: error })
-        setProcessing(false)
-      })
-  }
-  const inviteUser = () => {
-    axios
-      .post('/api/invite', { username, account, project })
-      .then((response) => {
-        if (response.status == 200) setInvitingUser(false)
-        setOpenInvite(false)
-      })
-      .catch((error) => {
-        console.log(error)
-        setInvitingUser(false)
-      })
+          .catch(error => {
+            console.log(error);
+          });
+
+
+        setOutputDetails({ output: "", error:error});
+        setProcessing(false);
+      });
+  };
+  const inviteUser= ()=>{
+    axios.post('/api/invite',{username,account,project})
+    .then((response)=>{
+      if(response.status==200)
+        setInvitingUser(false);
+      setOpenInvite(false);
+    }).catch((error)=>{
+      console.log(error)
+      setInvitingUser(false)
+    })
   }
 
   const [aiflag, setaiflag] = useState(false)
