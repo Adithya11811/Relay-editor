@@ -25,6 +25,7 @@ import { Input } from './input'
 import axios from 'axios'
 import { AuthProvider } from '@/hooks/AuthProvider'
 import { signOut } from '@/auth'
+import { Loader2 } from 'lucide-react'
 
 interface Others_Profile_props {
   account: account
@@ -90,17 +91,23 @@ const Others_Profile: React.FC<Others_Profile_props> = ({ account }) => {
           <div className="grid items-start justify-center gap-4">
             <div className="flex items-center justify-center gap-2 md:gap-4">
               <div className="flex flex-col justify-center items-center gap-2 md:gap-4">
-                <Image
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="150"
-                  src={account?.profileImage || '/placeholder.svg'}
-                  style={{
-                    aspectRatio: '150/150',
-                    objectFit: 'cover',
-                  }}
-                  width="150"
-                />
+                {!account?.profileImage ? (
+                  <li className="flex h-[150px] items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+                  </li>
+                ) : (
+                  <Image
+                    alt="Avatar"
+                    className="rounded-full"
+                    height="150"
+                    src={account?.profileImage || '/placeholder.svg'}
+                    style={{
+                      aspectRatio: '150/150',
+                      objectFit: 'cover',
+                    }}
+                    width="150"
+                  />
+                )}
                 <div className="grid items-center gap-1 text-center md:flex md:gap-1 md:text-left">
                   <h1 className="text-xl font-medium">@{account?.username}</h1>
                 </div>
@@ -117,13 +124,9 @@ const Others_Profile: React.FC<Others_Profile_props> = ({ account }) => {
                   </div>
                 </div>
                 {flag ? (
-                  <Button onClick={addFriend}>
-                    Add friend
-                  </Button>
+                  <Button onClick={addFriend}>Add friend</Button>
                 ) : (
-                  <Button >
-                    Already a friend
-                  </Button>
+                  <Button>Already a friend</Button>
                 )}
               </div>
             </div>

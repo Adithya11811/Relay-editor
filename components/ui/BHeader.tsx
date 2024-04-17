@@ -17,9 +17,12 @@ const Header: React.FC<profileProps> = ({imgUrl, proj}) => {
   const router = useRouter()
   return (
     <header className="flex h-14 lg:h-[60px] items-center gap-4 px-6 bg-gray-800/40">
-        <Link className="lg:hidden flex items-center gap-2 font-semibold" href="#">
-          <span className="">Relay</span>
-        </Link>
+      <Link
+        className="lg:hidden flex items-center gap-2 font-semibold"
+        href="#"
+      >
+        <span className="">Relay</span>
+      </Link>
       {typeof proj !== 'string' && (
         <nav className=" flex flex-1 gap-2 lg:gap-4 justify-center text-sm">
           <Link
@@ -85,7 +88,7 @@ const Header: React.FC<profileProps> = ({imgUrl, proj}) => {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/20">
-            Settings
+            <Link href={'/profile/settings'}>Settings</Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/20">
             Support

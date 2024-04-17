@@ -14,6 +14,7 @@ interface CardWrapperProps{
     backButtonLabel: string;
     backButtonHref: string;
     showSocial?: boolean;
+    bg?:'dark'
 }
 
 export const CardWrapper = ({
@@ -21,12 +22,14 @@ export const CardWrapper = ({
   headerLabel,
   backButtonHref,
   backButtonLabel,
-  showSocial,
+  bg
 }: CardWrapperProps) => {
   return (
-    <Card className="w-[400px] shadow-md">
+    <Card
+      className={`w-[400px] shadow-md ${bg === 'dark' ? 'bg-gray-800/60' : ''}`}
+    >
       <CardHeader>
-        <Header label={headerLabel} />
+        <Header label={headerLabel} bg={bg} />
       </CardHeader>
       <CardContent>{children}</CardContent>
       {/* Conditionally render the CardFooter only if backButtonLabel is not empty */}

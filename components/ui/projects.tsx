@@ -3,6 +3,8 @@ import {
   getAccountByAccountName,
   getProjetByAccountId,
   getAccountByUserId,
+  getColabByAccId,
+  getProjectsByProjectID,
 } from '@/data/user'
 import { useRouter } from 'next/navigation'
 import ProjectCard from './ProjectCard'
@@ -25,6 +27,7 @@ interface ProjectProps {
 const Projects: React.FC<ProjectProps> = ({ username }) => {
   const [account, setAccount] = useState<any>()
   const [projects, setProjects] = useState<Array<projects>>([])
+  const [colabprojects, setColabprojects] = useState<Array<projects>>([])
   const router = useRouter()
   const id = AuthProvider()
 
@@ -61,15 +64,60 @@ const Projects: React.FC<ProjectProps> = ({ username }) => {
     fetchProject()
   }, [account])
 
+useEffect(() => {
+  const fetchColabProject = async () => {
+    try {
+      if (account?.id) {
+        const response = await getColabByAccId(account.id)
+
+        // Loop through collaborator projects
+        const projectsPromises = response?.map(async (colab:projects) => {
+          const project = await getProjectsByProjectID(colab.projectId)
+          // Do something with the project, like set it in state
+          return project
+        })
+
+        const projects = await Promise.all(projectsPromises)
+        // Filter out null values from projects array
+        const filteredProjects = projects.filter((project) => project !== null)
+        console.log('Projects for collaborators:', filteredProjects)
+        setColabprojects(filteredProjects)
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error)
+    }
+  }
+
+  fetchColabProject()
+}, [account])
+
+
+
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-      <div className="grid items-start justify-center gap-4">
-        <div className="flex items-center justify-center gap-2 md:gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <main className=" flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+      <div className="grid items-start justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2 md:gap-1">
+          Your Projects
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {/* Your projects */}
             {projects?.length === 0 ? (
-              <div>No Projects have been created</div>
+              <div className="text-sm bg-slate-500">
+                No Projects have been created
+              </div>
             ) : (
               projects?.map((project, index) => (
+                <ProjectCard key={index} project={project} />
+              ))
+            )}
+          </div>
+          Colaborative projects
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {colabprojects?.length === 0 ? (
+              <div className="text-sm bg-slate-500">
+                No Projects have been created
+              </div>
+            ) : (
+              colabprojects?.map((project, index) => (
                 <ProjectCard key={index} project={project} />
               ))
             )}

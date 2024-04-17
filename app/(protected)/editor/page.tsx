@@ -1,12 +1,13 @@
-"use client"
+'use client'
 
-import { SideBar } from "@/components/ui/sidebar";
-import {  useEffect, useState } from "react";
-import axios from "axios";
-import OutputWindow from "@/components/project/outputWindow";
-import { useSearchParams } from "next/navigation";
-import { AuthProvider } from "@/hooks/AuthProvider";
-import { getAccountByUserId } from "@/data/user";
+import { SideBar } from '@/components/ui/sidebar'
+import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import axios from 'axios'
+import OutputWindow from '@/components/project/outputWindow'
+import { useSearchParams } from 'next/navigation'
+import { AuthProvider } from '@/hooks/AuthProvider'
+import { getAccountById, getAccountByUserId, getColabsByProjectId, getHostByProjectID } from '@/data/user'
 import Link from 'next/link'
 import {
   DropdownMenu,
@@ -18,122 +19,166 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui//button'
 import Image from 'next/image'
-import { LogoutButton } from "@/components/auth/logout-button";
-import { ArrowLeft, Star, X } from "lucide-react";
+import { LogoutButton } from '@/components/auth/logout-button'
+import { ArrowLeft, Star, X } from 'lucide-react'
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 import { useChat } from 'ai/react'
-import { Input } from "@/components/ui/input";
-import GenAiContent from "@/components/GenAiContent";
-import { EditorComponent } from "@/components/project/EditorComponent";
+import { Input } from '@/components/ui/input'
+import GenAiContent from '@/components/GenAiContent'
+import { EditorComponent } from '@/components/project/EditorComponent'
+import { GrRobot } from 'react-icons/gr'
+import { FaRobot } from 'react-icons/fa'
+import { AnimatedTooltip } from '@/components/ui/animated-tooltip'
+import { Collaborators } from '@prisma/client'
 
-const ProjectsPage = () => {
-  const params = useSearchParams();
-
-  const projectId = params.get('projectId');
-  const [account, setAccount] = useState<unknown>(null)
-  const router = useRouter();
-
-  const id = AuthProvider();
-    useEffect(() => {
-      const fetchAccount = async () => {
-        try {
-          const response = await getAccountByUserId(id!)
-          setAccount(response)
-        } catch (error) {
-          console.error('Error fetching account:', error)
-        }
-      }
-
-      fetchAccount()
-    }, [id])
-
-  const [outputDetails, setOutputDetails] = useState({
-    output: "",
-    error: ""
-  });
-  const [openInvite, setOpenInvite] = useState<boolean>(false);
-  const [processing, setProcessing] = useState(false);
-  const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("");
-  const [fileName, setFilename] = useState("");
-  const [project, setProject] = useState(null);
-  const [files, setFiles] = useState([]);
-  const [fileContent, setFileContent] = useState({});
-  const [extension, setExtension] = useState("")
-  const [username,setUsername] = useState("")
-  const [invitingUser,setInvitingUser] = useState(false)
-  const { messages, input, handleInputChange, handleSubmit } = useChat()
-
-
-  
-
-useEffect(() => {
-  axios.post("/api/getProject", { projectId }).then((response) => {
-    setFiles(response.data.files);
-    setProject(response.data.project);
-    setLanguage(response.data.project.projectType);
-    setFileContent(response.data.fileContents)
-    const projectExtension = response.data.extension;
-    const defaultFileName = `main.${projectExtension}`;
-    setExtension(projectExtension);
-    setFilename(defaultFileName);
-
-    // Check if the file content exists before accessing it
-    setCode(response.data.fileContents?.[`main_${projectExtension}`] || '');
-  }).catch((error) => {
-    console.log(error);
-  });
-}, [projectId]);
-
-  const run = async () => {
-    setProcessing(true);
-    axios.post("/api/runCode", { code, language })
-      .then(response => {
-        const output = response.data.data.output;
-        setOutputDetails({ output: output, error: "" });
-        setProcessing(false);
-        setFileContent(code)
-        axios.post("/api/save", { code,fileName,files, project })
-          .then(response => {
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      })
-      .catch(err => {
-        const error = err.response.data.error;
-        console.log(error)
-        axios.post("/api/save", { code,fileName,files, project })
-          .then(response => {
-            
-          })
-          .catch(error => {
-            console.log(error);
-          });
-        setOutputDetails({ output: "", error:error});
-        setProcessing(false);
-      });
-  };
-  const inviteUser= ()=>{
-    axios.post('/api/invite',{username,account,project})
-    .then((response)=>{
-      if(response.status==200)
-        setInvitingUser(false);
-      setOpenInvite(false);
-    }).catch((error)=>{
-      console.log(error)
-      setInvitingUser(false)
-    })
+interface items {
+    id: number
+    name: string
+    link: string
+    image: string
   }
 
+const ProjectsPage = () => {
+  const params = useSearchParams()
 
-const [aiflag, setaiflag] = useState(false)
-const handleAiSubmit = ()=>{
-  setaiflag(!aiflag)
-}
+  const projectId = params.get('projectId')
+  const [account, setAccount] = useState<unknown>(null)
+  const [colabs, setColabs] = useState<unknown>()
+  const [host, setHost] = useState<string>()
+  // const [items, setItems] = useState<items[]>()
+  const router = useRouter()
+
+  const id = AuthProvider()
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const response = await getAccountByUserId(id!)
+        setAccount(response)
+      } catch (error) {
+        console.error('Error fetching account:', error)
+      }
+    }
+
+    fetchAccount()
+  }, [id])
+
+
+  // 
+  // if(colabs === undefined){
+  //   console.log('why')
+  // }else{
+  //         const colabsFormatted = colabs.map((colab) => ({
+  //           id: colab.id,
+  //           name: colab.name,
+  //           profileImage: colab.profileImage,
+  //         }))
+  // }
+
+
+// console.log(colabs)
+  useEffect(() => {
+    const fetchHost = async () => {
+      try {
+        const response = await getHostByProjectID(projectId!)
+        setHost(response)
+      } catch (error) {
+        console.error('Error fetching account:', error)
+      }
+    }
+
+    fetchHost()
+  }, [projectId])
+
+
+
+  const [outputDetails, setOutputDetails] = useState({
+    output: '',
+    error: '',
+  })
+  const [openInvite, setOpenInvite] = useState<boolean>(false)
+  const [processing, setProcessing] = useState(false)
+  const [code, setCode] = useState('')
+  const [language, setLanguage] = useState('')
+  const [fileName, setFilename] = useState('')
+  const [project, setProject] = useState(null)
+  const [files, setFiles] = useState([])
+  const [fileContent, setFileContent] = useState({})
+  const [extension, setExtension] = useState('')
+  const [username, setUsername] = useState('')
+  const [invitingUser, setInvitingUser] = useState(false)
+  
+
+
+  useEffect(() => {
+    axios
+      .post('/api/getProject', { projectId })
+      .then((response) => {
+        setFiles(response.data.files)
+        setProject(response.data.project)
+        setLanguage(response.data.project.projectType)
+        setFileContent(response.data.fileContents)
+        const projectExtension = response.data.extension
+        const defaultFileName = `main.${projectExtension}`
+        setExtension(projectExtension)
+        setFilename(defaultFileName)
+
+        // Check if the file content exists before accessing it
+        setCode(response.data.fileContents?.[`main_${projectExtension}`] || '')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [projectId])
+
+  const run = async () => {
+    setProcessing(true)
+    axios
+      .post('/api/runCode', { code, language })
+      .then((response) => {
+        const output = response.data.data.output
+        setOutputDetails({ output: output, error: '' })
+        setProcessing(false)
+        setFileContent(code)
+        axios
+          .post('/api/save', { code, fileName, files, project })
+          .then((response) => {})
+          .catch((error) => {
+            console.log(error)
+          })
+      })
+      .catch((err) => {
+        const error = err.response.data.error
+        console.log(error)
+        axios
+          .post('/api/save', { code, fileName, files, project })
+          .then((response) => {})
+          .catch((error) => {
+            console.log(error)
+          })
+        setOutputDetails({ output: '', error: error })
+        setProcessing(false)
+      })
+  }
+  const inviteUser = () => {
+    axios
+      .post('/api/invite', { username, account, project })
+      .then((response) => {
+        if (response.status == 200) setInvitingUser(false)
+        setOpenInvite(false)
+      })
+      .catch((error) => {
+        console.log(error)
+        setInvitingUser(false)
+      })
+  }
+
+  const [aiflag, setaiflag] = useState(false)
+  const handleAiSubmit = () => {
+    setaiflag(!aiflag)
+  }
 
   return (
     <div className="flex flex-col justify-center align-middle overflow-y-clip">
@@ -187,22 +232,57 @@ const handleAiSubmit = ()=>{
               <PopoverContent>Hello</PopoverContent>
             </Popover> */}
             {}
-            <Button
+            {/* <Button
               disabled={!code && !!outputDetails?.error}
-              className="border-2  border-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
+              className="border-2 border-green-200 bg-gradient-to-r from-green-400 to-green-800 text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
               onClick={handleAiSubmit}
             >
               <Star className="fill-current text-lg" />
               Try Ai
-            </Button>
+            </Button> */}
+            <motion.button
+              disabled={!code && !!outputDetails?.error}
+              className="border-2 lg:-mx-32 border-emerald-300 bg-gradient-to-r from-green-500 to-green-800 text-white px-4 py-1 rounded-md flex items-center justify-center gap-1 space-x-2"
+              whileHover={
+                !(!code && !!outputDetails?.error) ? { scale: 1.1 } : {}
+              }
+              whileTap={
+                !(!code && !!outputDetails?.error) ? { scale: 0.9 } : {}
+              }
+              onClick={
+                !(!code && !!outputDetails?.error) ? handleAiSubmit : null
+              }
+              animate={
+                !code && !!outputDetails?.error
+                  ? {}
+                  : {
+                      scale: [1, 1.1, 0.9, 1],
+                      rotate: [0, -5, 5, -5, 5, 0],
+                      transition: { duration: 0.6 },
+                    }
+              }
+            >
+              {/* <Star className="fill-current text-lg" /> */}
+              <FaRobot className="text-slate-800 text-lg" />
+              Try Ai
+            </motion.button>
           </nav>
-          <Button
-            variant="runner"
-            className="text-center w-fit"
-            onClick={() => setOpenInvite(true)}
-          >
-            Invite
-          </Button>
+          {/* <div className="flex flex-row items-center justify-center w-full">
+            {items === undefined ? (
+              <div>Loader</div>
+            ) : (
+              <AnimatedTooltip items={items} />
+            )}
+          </div> */}
+          {host !== undefined && host === account?.id && (
+            <Button
+              variant="runner"
+              className="text-center w-fit"
+              onClick={() => setOpenInvite(true)}
+            >
+              Invite
+            </Button>
+          )}
           <Dialog open={openInvite} onOpenChange={setOpenInvite}>
             <DialogTrigger asChild></DialogTrigger>
             <DialogContent>
@@ -263,13 +343,20 @@ const handleAiSubmit = ()=>{
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent
+              align="end"
+              className="bg-slate-800/20  text-gray-400"
+            >
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/20">
+                <Link href={'/profile/settings'}>Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/20">
+                Support
+              </DropdownMenuItem>
+              {/* <DropdownMenuSeparator /> */}
+              <DropdownMenuItem className="focus:text-gray-50 focus:bg-slate-800/60">
                 <LogoutButton>Logout</LogoutButton>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -315,7 +402,12 @@ const handleAiSubmit = ()=>{
           fileContents={fileContent}
         />
         <div className="overlay overflow-clip w-full h-full bg-[#2a2828]">
-          <EditorComponent language={language} code={code}  projectId={projectId} setCode={setCode}/>
+          <EditorComponent
+            language={language}
+            code={code}
+            projectId={projectId}
+            setCode={setCode}
+          />
         </div>
         <div className="right-container flex flex-shrink-0 w-[30%] flex-col">
           <OutputWindow outputDetails={outputDetails} />
@@ -332,7 +424,7 @@ const handleAiSubmit = ()=>{
       </div>
     </div>
   )
-      
 }
 
-export default ProjectsPage;
+export default ProjectsPage
+

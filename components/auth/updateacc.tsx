@@ -7,12 +7,7 @@ import * as z from 'zod'
 import { FaGithub } from 'react-icons/fa'
 import { FaLinkedin } from 'react-icons/fa'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 import { useState, useTransition, useRef } from 'react'
 import {
@@ -33,18 +28,38 @@ import type { Crop, PixelCrop } from 'react-image-crop'
 import ReactCrop from 'react-image-crop'
 import { useUploadThing } from '@/utils/uploadthing'
 import Image from 'next/image'
-import { useSearchParams,useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from 'next/navigation'
+interface account {
+  access_token: string
+  banner: string
+  created_at: Date
+  expires_at: number
+  githubLink: string
+  id: string
+  id_token: string | null
+  linkedinLink: string
+  profileImage: string
+  provider: string
+  providerAccountId: string
+  refresh_token: string
+  scope: string | null
+  session_state: string | null
+  token_type: string | null
+  type: string
+  updated_at: Date
+  userId: string
+  username: string
+}
+interface UpdateACCProps{
+    acc:account
+}
 
-
-
-export const CreateACC = () => {
-  const searchParams = useSearchParams();  
+export const UpdateACC = ({acc}:UpdateACCProps) => {
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | undefined>('')
   const [success, setSuccess] = useState<string | undefined>('')
-  const router = useRouter();
-  // const [fullname, setfullname] = useState<string | undefined>('')
-  // const [fallbackname, setfallbackname] = useState<string | undefined>('')
+  const router = useRouter()
   const [imgSrc, setImgSrc] = useState('')
   const [open, setOpen] = useState<boolean | undefined>(false)
 
@@ -53,7 +68,6 @@ export const CreateACC = () => {
     onClientUploadComplete(res) {
       console.log('Client upload complete', res)
       const fileUrl = res?.[0]?.url
-      //if (fileUrl) window.location.href = fileUrl
       setimgUrl(fileUrl)
     },
   })
@@ -80,7 +94,7 @@ export const CreateACC = () => {
   const form = useForm<z.infer<typeof CreateAccSchema>>({
     resolver: zodResolver(CreateAccSchema),
     defaultValues: {
-      accountId:'',
+      accountId: '',
       username: '',
       githubLink: '',
       linkedinLink: '',
@@ -89,21 +103,20 @@ export const CreateACC = () => {
     },
   })
 
-  const id = searchParams.get("user");
-  // console.log(id)
+  const id = searchParams.get('user')
   const onSubmit = (values: z.infer<typeof CreateAccSchema>) => {
     setError('')
     setSuccess('')
-    values['profileImage']=imgUrl;
-    values['accountId'] = id!;
+    values['profileImage'] = imgUrl
+    values['accountId'] = id!
     console.log(values)
     startTransition(() => {
       axios
-        .post('/api/auth/createacc', values)
+        .post('/api/auth/updateeacc', values)
         .then((data) => {
           console.log(data)
           setSuccess(data.data.success)
-          router.push("/settings")
+          router.push('/settings')
         })
         .catch((error) => {
           setError(error.response.data.error)
@@ -112,9 +125,10 @@ export const CreateACC = () => {
   }
   return (
     <CardWrapper
-      headerLabel="Create a Profile"
+      headerLabel="Update Profile"
       backButtonHref=""
       backButtonLabel=""
+      bg="dark"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
@@ -125,13 +139,14 @@ export const CreateACC = () => {
                 <DialogTrigger asChild>
                   <Avatar>
                     {imgUrl && <AvatarImage src={imgUrl} />}
+                    {!imgUrl && <AvatarImage src={acc.profileImage} />}
                     <AvatarFallback className="bg-slate-700 scale-3 text-white font-bold text-xl">
                       AV
                     </AvatarFallback>
                   </Avatar>
                 </DialogTrigger>
               </div>
-              <DialogContent className="w-50 flex flex-col justify-center items-center">
+              <DialogContent className="w-50 bg-gray-800/60 flex flex-col justify-center items-center">
                 <FormField
                   control={form.control}
                   name="profileImage"
@@ -188,32 +203,6 @@ export const CreateACC = () => {
                 />
               </DialogContent>
             </Dialog>
-            {/* 
-            <FormField
-              control={form.control}
-              name="linkedinLink"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>
-                      <div className="flex gap-2">
-                        <FaLinkedin /> LinkedIn Link
-                      </div>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder=""
-                        type="file"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )
-              }}
-            /> */}
-            {/*--------------*/}
 
             <FormField
               control={form.control}
@@ -221,7 +210,9 @@ export const CreateACC = () => {
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>User Name</FormLabel>
+                    <FormLabel>
+                      <span className="text-slate-500">User Name</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -229,7 +220,8 @@ export const CreateACC = () => {
                         placeholder="John Doe"
                         type="text"
                         // onChange={handleChange}
-                        // value={fullname}
+                        value={acc.username}
+                        className="text-slate-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -244,7 +236,7 @@ export const CreateACC = () => {
                 return (
                   <FormItem>
                     <FormLabel>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 text-slate-500">
                         <FaGithub /> Github Link
                       </div>
                     </FormLabel>
@@ -254,6 +246,8 @@ export const CreateACC = () => {
                         disabled={isPending}
                         placeholder=""
                         type="text"
+                        value={acc.githubLink}
+                        className="text-slate-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -268,7 +262,7 @@ export const CreateACC = () => {
                 return (
                   <FormItem>
                     <FormLabel>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 text-slate-500">
                         <FaLinkedin /> LinkedIn Link
                       </div>
                     </FormLabel>
@@ -278,6 +272,8 @@ export const CreateACC = () => {
                         disabled={isPending}
                         placeholder=""
                         type="text"
+                        value={acc.linkedinLink}
+                        className="text-slate-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -290,14 +286,14 @@ export const CreateACC = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Create Account
+            Update Account
           </Button>
         </form>
       </Form>
     </CardWrapper>
   )
 }
-export default CreateACC
+export default UpdateACC
 
 function cropImage(image: HTMLImageElement, crop: PixelCrop) {
   const canvas = document.createElement('canvas')

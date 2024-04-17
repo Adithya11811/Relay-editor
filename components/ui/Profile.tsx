@@ -29,6 +29,7 @@ import axios from 'axios'
 import Header from './BHeader'
 import Bsidebar from './Bsidebar'
 import { signOut, useSession } from 'next-auth/react'
+import { Loader2 } from 'lucide-react'
 
 interface ProfileProps {
   id: string
@@ -150,126 +151,126 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
 
     //   <div className="flex flex-col">
     //     <Header imgUrl={account?.profileImage} proj={false}/>
-        <div className="w-full  bg-grid-white/[0.2] relative flex items-center justify-center">
-          {/* Radial gradient for the container to give a faded look */}
-          <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black)]"></div>
-          <div className="relative bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-green-600">
-            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-              <div className="grid items-start justify-center gap-4">
-                <div className="flex items-center justify-center gap-2 md:gap-4">
-                  <div className="flex flex-col justify-center items-center gap-2 md:gap-4">
-                    <Image
-                      alt="Avatar"
-                      className="rounded-full"
-                      height="150"
-                      src={account?.profileImage || '/placeholder.svg'}
-                      style={{
-                        aspectRatio: '150/150',
-                        objectFit: 'cover',
-                      }}
-                      width="150"
-                    />
-                    <div className="grid items-center gap-1 text-center md:flex md:gap-1 md:text-left">
-                      <h1 className="text-xl font-medium">
-                        @{account?.username}
-                      </h1>
-                      {/* <Button className="rounded-full" size="icon">
+    <div className="w-full  bg-grid-white/[0.2] relative flex items-center justify-center">
+      {/* Radial gradient for the container to give a faded look */}
+      <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black)]"></div>
+      <div className="relative bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-green-600">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+          <div className="grid items-start justify-center gap-4">
+            <div className="flex items-center justify-center gap-2 md:gap-4">
+              <div className="flex flex-col justify-center items-center gap-2 md:gap-4">
+                {!account?.profileImage ? (
+                  <li className="flex h-[150px] items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+                  </li>
+                ) : (
+                  <Image
+                    alt="Avatar"
+                    className="rounded-full"
+                    height="150"
+                    src={account?.profileImage || '/placeholder.svg'}
+                    style={{
+                      aspectRatio: '150/150',
+                      objectFit: 'cover',
+                    }}
+                    width="150"
+                  />
+                )}
+
+                <div className="grid items-center gap-1 text-center md:flex md:gap-1 md:text-left">
+                  <h1 className="text-xl font-medium">@{account?.username}</h1>
+                  {/* <Button className="rounded-full" size="icon">
                   <span className="sr-only">Edit</span>
                 </Button> */}
-                    </div>
-                    <div className="flex gap-5 items-center">
-                      <div className="text-xl ml-3 text-gray-500 dark:text-gray-400 focus:text-white">
-                        <Link
-                          href={account?.linkedinLink || '#'}
-                        >
-                          <FaLinkedinIn size={30} />
-                        </Link>
-                      </div>
-                      <div className="text-xl text-gray-500 dark:text-gray-400 focus:text-white">
-                        <Link href={account?.githubLink || '#'}>
-                          <FaGithub size={30} />
-                        </Link>
-                      </div>
-                    </div>
+                </div>
+                <div className="flex gap-5 items-center">
+                  <div className="text-xl ml-3 text-gray-500 dark:text-gray-400 focus:text-white">
+                    <Link href={account?.linkedinLink || '#'}>
+                      <FaLinkedinIn size={30} />
+                    </Link>
+                  </div>
+                  <div className="text-xl text-gray-500 dark:text-gray-400 focus:text-white">
+                    <Link href={account?.githubLink || '#'}>
+                      <FaGithub size={30} />
+                    </Link>
                   </div>
                 </div>
               </div>
-              <div className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
-                
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
-                    <HoverEffect items={projects} />
-                  </DialogTrigger>
-                  <DialogContent className="w-50 flex flex-col justify-center items-center bg-gray-800 text-green-500">
-                    <Form {...form}>
-                      <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-2"
-                      >
-                        <LanguagesDropdown onSelectChange={onSelectChange} />
-                        <div className=" space-y-6 m-2">
-                          <FormField
-                            control={form.control}
-                            name="pname"
-                            render={({ field }) => {
-                              return (
-                                <FormItem>
-                                  <FormLabel className="">
-                                    Project Name:
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      disabled={isPending}
-                                      placeholder=""
-                                      type="text"
-                                      className='text-white'
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )
-                            }}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="pdescp"
-                            render={({ field }) => {
-                              return (
-                                <FormItem>
-                                  <FormLabel className="">
-                                    Project description:
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      disabled={isPending}
-                                      placeholder="Interactive project"
-                                      type="text"
-                                      className='text-white'
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )
-                            }}
-                          />
-                        </div>
-                        <Button
-                          disabled={isPending}
-                          type="submit"
-                          className="w-full"
-                        >
-                          Submit
-                        </Button>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </main>
+            </div>
           </div>
-        </div>
+          <div className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger className="w-full flex flex-col justify-center items-center max-w-5xl mx-auto px-8">
+                <HoverEffect items={projects} />
+              </DialogTrigger>
+              <DialogContent className="w-50 flex flex-col justify-center items-center bg-gray-800 text-green-500">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-2"
+                  >
+                    <LanguagesDropdown onSelectChange={onSelectChange} />
+                    <div className=" space-y-6 m-2">
+                      <FormField
+                        control={form.control}
+                        name="pname"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel className="">Project Name:</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  disabled={isPending}
+                                  placeholder=""
+                                  type="text"
+                                  className="text-white"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )
+                        }}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="pdescp"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel className="">
+                                Project description:
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  disabled={isPending}
+                                  placeholder="Interactive project"
+                                  type="text"
+                                  className="text-white"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    </div>
+                    <Button
+                      disabled={isPending}
+                      type="submit"
+                      className="w-full"
+                    >
+                      Submit
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </main>
+      </div>
+    </div>
     //   </div>
     // </div>
   )

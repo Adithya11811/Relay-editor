@@ -54,6 +54,7 @@ export const LoginForm = () => {
                         form.reset();
                         setSuccess(response.data.success);
                         router.push('/profile');
+                        
                     }
 
                     if(response?.data.twoFactor) {

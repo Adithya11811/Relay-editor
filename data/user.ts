@@ -1,6 +1,6 @@
 'use server'
 import { db } from '@/lib/db'
-import { Subreddit } from '@prisma/client'
+import { Collaborators, Subreddit } from '@prisma/client'
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -114,3 +114,79 @@ export const getpostsData = async (followedCommunities: any[]) => {
     return e
   }
 }
+
+
+export const getColabsByProjectId = async (pid: string) => {
+  try {
+    const colabsData = await db.collaborators.findMany({
+      where: {
+        projectId: pid,
+      },
+    })
+
+    // Transform the data to match the required format
+
+
+    return colabsData
+  } catch (e) {
+    throw e // Rethrow the error to be handled elsewhere
+  }
+}
+
+export const getColabByAccId = async (id:string)=>{
+  try {
+        const colabsData = await db.collaborators.findMany({
+          where: {
+            collaborators: id,
+          },
+        })
+        return colabsData
+  }catch(e){
+    return e
+  }
+}
+
+export const getProjectsByProjectID = async (pid: string) => {
+  try {
+    const projData = await db.project.findUnique({
+      where: {
+        projectId: pid,
+      },
+    })
+    return projData
+  } catch (e) {
+    return e
+  }
+}
+
+export const getHostByProjectID = async (pid: string) => {
+  try {
+    const projData = await db.project.findUnique({
+      where: {
+        projectId: pid,
+      },
+      select:{
+        creator:true,
+      }
+    })
+    return projData
+  } catch (e) {
+    return e
+  }
+}
+
+// export const getHostByProjectId = async (pid: string) => {
+//   try {
+//     const colabsdata = await db.project.findUnique({
+//       where: {
+//         projectId: pid,
+//       },
+//       include:{
+//         creator: true;
+//       }
+//     })
+//     return colabsdata
+//   } catch (e) {
+//     return e
+//   }
+// }

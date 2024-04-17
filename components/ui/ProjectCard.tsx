@@ -42,7 +42,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
     <Link href={url}>
       <motion.div
-        className="bg-gray-800/40 rounded-lg shadow-md p-4 m-4 flex flex-col items-center justify-center w-[200px] hover:border-2 hover:border-green-500"
+        className="bg-gray-800/40 rounded-lg shadow-md p-4 m-2 flex flex-col items-center justify-center w-[200px] hover:border-2 hover:border-green-500"
         whileHover={{ scale: 1.1, borderColor: '#10B981' }}
         transition={{ duration: 0.5 }}
       >

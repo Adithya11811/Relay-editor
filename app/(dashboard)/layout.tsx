@@ -32,7 +32,7 @@ const DashLayout = ({ children }: { children: React.ReactNode }) => {
     return <div>Loader</div>
   } else {
     return (
-      <div className="grid min-h-screen lg:grid-cols-[240px_1fr]">
+      <div className="grid  min-h-screen lg:grid-cols-[240px_1fr]">
         <Bsidebar id={id} proj={false}/>
 
         <div className="flex flex-col">

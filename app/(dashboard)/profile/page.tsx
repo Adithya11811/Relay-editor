@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 const Page = () => {
   const router = useRouter();
-  // const search_query = 
+  router.refresh()
   const id = AuthProvider()
   
   // console.log(id)

@@ -45,6 +45,7 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
       console.error(`Invalid file name format: ${file.name}`);
     }
   };
+  
 
   const createNewFile = async () => {
     try {
@@ -125,7 +126,7 @@ export const SideBar = ({ files, project, setFileContent, setExtension, extensio
             <li
               key={file.id}
               onClick={() => handleFileClick(file)}
-              className={selectedFileName === file.name ? 'bg-neutral-200' : ''}
+              className={selectedFileName === file.name ? 'px-2 text-black bg-green-400 w-fit rounded-lg' : ''}
             >
               {file.name}
             </li>

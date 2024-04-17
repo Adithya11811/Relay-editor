@@ -371,7 +371,7 @@ const Bsidebar: React.FC<ProfileProps> = ({ id, proj, username}) => {
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg  py-2 transition-all text-gray-400 hover:text-gray-50"
-                href="#"
+                href={`/profile/settings/${id}`}
               >
                 <SettingsIcon className="h-4 w-4" />
                 Settings

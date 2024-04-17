@@ -19,7 +19,7 @@ const HorizontalScrollCarousel: React.FC = () => {
   const x = useTransform(scrollYProgress, [0, 1], ['50%', '-85%'])
 
   return (
-    <section ref={targetRef} className="relative h-[400vh] bg-black">
+    <section ref={targetRef} className="relative h-[500vh] bg-black">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <motion.div style={{ x }} className="flex gap-4">
           {cards.map((card) => {
@@ -77,13 +77,18 @@ const cards = [
   },
   {
     // url: '/hsec3.jpg',
-    title: 'Supports Multiple Interfaces',
+    title: 'Integrated with AI',
     id: 3,
   },
   {
     // url: '/hsec4.jpg',
     title: 'diverse coding languages',
     id: 4,
+  },
+  {
+    // url: '/hsec3.jpg',
+    title: 'Build strong Community',
+    id: 5,
   },
 ]
       // <div
