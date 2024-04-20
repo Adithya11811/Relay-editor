@@ -110,18 +110,22 @@ useEffect(() => {
               ))
             )}
           </div>
-          Colaborative projects
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {colabprojects?.length === 0 ? (
-              <div className="text-sm bg-slate-500">
-                No Projects have been created
+          {colabprojects?.length !== 0 && (
+            <div>
+              Colaborative projects
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {colabprojects?.length === 0 ? (
+                  <div className="text-sm bg-slate-500">
+                    No Invitaions, check once
+                  </div>
+                ) : (
+                  colabprojects?.map((project, index) => (
+                    <ProjectCard key={index} project={project} />
+                  ))
+                )}
               </div>
-            ) : (
-              colabprojects?.map((project, index) => (
-                <ProjectCard key={index} project={project} />
-              ))
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </main>

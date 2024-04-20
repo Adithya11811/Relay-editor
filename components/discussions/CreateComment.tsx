@@ -18,6 +18,12 @@ interface CreateCommentProps {
   replyToId?: string
 }
 
+interface profanity { 
+  isProfanity: boolean
+  score: Number
+  FlaggedFor?: Array<string>
+}
+
 const CreateComment: FC<CreateCommentProps> = ({ postId, replyToId }) => {
   const [input, setInput] = useState<string>('')
   const router = useRouter()
@@ -30,6 +36,23 @@ if(id === undefined){
   const { mutate: comment, isLoading } = useMutation({
     mutationFn: async ({ postId, text, replyToId }: CommentRequest) => {
       const payload: CommentRequest = { postId, text, replyToId, id }
+      // try {
+      const res = await fetch('https://vector.profanity.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      })
+      const profanedata = await res.json()
+      console.log(profanedata.isProfanity)
+      console.log(text) // Log the response data
+
+      if (profanedata.isProfanity === true) {
+        return toast({
+          title: 'Profane speech detected.',
+          description: 'Kindly restrict yourself from using bad words',
+          variant: 'destructive',
+        })
+      }
 
       const { data } = await axios.patch(
         `/api/subreddit/post/Comment/`,

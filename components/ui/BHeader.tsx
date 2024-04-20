@@ -10,7 +10,6 @@ import { ArrowLeft } from "lucide-react";
 interface profileProps {
     imgUrl: string
     proj: true | false | 'koi mil gaya'
-
 }
 
 const Header: React.FC<profileProps> = ({imgUrl, proj}) => {

@@ -15,7 +15,7 @@ interface GenAiProps {
 const msgTemplate = (lang: string, code: string, error?: string) => {
   return `Correct the code please.\nLanguage: ${lang}\nCode: ${code}\nError: ${
     error || 'Resolve the issue'
-  }`
+  } pls don't give input statements`
 }
 
 const GenAiContent: React.FC<GenAiProps> = ({

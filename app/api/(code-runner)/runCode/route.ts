@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
             case 'cpp':
                 code = removeCommentsCpp(code);
                 // Escape single and double quotes in the code
-                code = code.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                // code = code.replace(/'/g, "\\'").replace(/"/g, '\\"');
                 image = 'gcc:latest';
                 command = [
                     'bash',

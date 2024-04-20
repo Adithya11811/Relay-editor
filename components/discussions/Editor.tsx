@@ -47,9 +47,31 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       title,
       content,
       subredditId,
-      id
+      id,
     }: PostCreationRequest) => {
       const payload: PostCreationRequest = { title, content, subredditId, id }
+      let total_content;
+      for (const block of content.blocks) {
+        total_content += block.text // Assuming block.text contains the text content
+      }
+       const str = total_content + title
+      const res = await fetch('https://vector.profanity.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: str }),
+      })
+      const profanedata = await res.json()
+      console.log(profanedata.isProfanity)
+      console.log(str) // Log the response data
+
+      if (profanedata.isProfanity === true) {
+        return toast({
+          title: 'Profane speech detected.',
+          description: 'Kindly restrict yourself from using bad words',
+          variant: 'destructive',
+        })
+      }
+
       const { data } = await axios.post('/api/subreddit/post/create', payload)
       return data
     },
@@ -155,7 +177,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       title: data.title,
       content: blocks,
       subredditId,
-      id:id!
+      id: id!,
     }
 
     createPost(payload)
