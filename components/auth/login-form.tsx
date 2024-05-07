@@ -1,11 +1,11 @@
 "use client";
 import axios from "axios";
 import { CardWrapper } from "@/components/auth/card-wrapper"
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { LoginSchema } from "@/schema";
-import {  useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
     Form,
     FormControl,
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {FormError} from "@/components/form-error";
+import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -24,7 +24,7 @@ import Link from "next/link";
 // LoginForm component for handling user login
 export const LoginForm = () => {
     const searchParams = useSearchParams();
-    const urlError = searchParams.get("error") ==="OAuthAccountNotLinked"?"Email Already use with different provider":"";
+    const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email Already use with different provider" : "";
     const router = useRouter();
 
     const [showTwoFactor, setShowTwoFactor] = useState(false);
@@ -44,32 +44,32 @@ export const LoginForm = () => {
         setError("");
         setSuccess("");
         axios.post('/api/auth/login', values)
-                .then((response) => {
-                    
-                    if(response?.data.error) {
-                        form.reset();
-                        setError(response.data.error);
-                    }
-                    if(response?.status === 200) {
-                        form.reset();
-                        setSuccess(response.data.success);
-                        router.push('/profile');
-                        
-                    }
+            .then((response) => {
+                if (response?.data.error) {
+                    form.reset();
+                    setError(response.data.error);
+                }
+                if (response?.status === 200) {
+                    form.reset();
+                    setSuccess(response.data.success);
+                    console.log("redirecting")
+                    router.push('/profile');
 
-                    if(response?.data.twoFactor) {
-                        
-                        setShowTwoFactor(true);
-                    }
-                })
-                .catch((error) => {
-                    console.log(error )
-                    setError(error.response.data.error);
-                });
+                }
+
+                if (response?.data.twoFactor) {
+
+                    setShowTwoFactor(true);
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+                setError(error.message);
+            });
     };
 
     return (
-        <CardWrapper 
+        <CardWrapper
             headerLabel="Welcome back"
             backButtonHref="/auth/register"
             backButtonLabel="Don't have an account?"
@@ -83,7 +83,7 @@ export const LoginForm = () => {
                             <FormField
                                 control={form.control}
                                 name="code"
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Two Factor Code:</FormLabel>
                                         <FormControl>
@@ -104,7 +104,7 @@ export const LoginForm = () => {
                                 <FormField
                                     control={form.control}
                                     name="email"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Email:</FormLabel>
                                             <FormControl>
@@ -120,19 +120,19 @@ export const LoginForm = () => {
                                 <FormField
                                     control={form.control}
                                     name="password"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Password:</FormLabel>
                                             <FormControl>
                                                 <Input {...field}
                                                     disabled={isPending}
-                                                    placeholder="*********" 
-                                                    type="password"/>
+                                                    placeholder="*********"
+                                                    type="password" />
                                             </FormControl>
                                             <Button
                                                 size="sm"
                                                 variant="link"
-                                                asChild
+                                                // asChild
                                                 className="px-0 font-normal">
                                                 <Link href="/auth/reset">
                                                     Forgot Password?
@@ -147,8 +147,8 @@ export const LoginForm = () => {
                     </div>
 
                     {/* Error and success messages */}
-                    <FormError message={error || urlError}/>
-                    <FormSuccess message={success}/>
+                    <FormError message={error || urlError} />
+                    <FormSuccess message={success} />
 
                     {/* Submit button */}
                     <Button disabled={isPending} type="submit" className="w-full">

@@ -12,7 +12,6 @@ const requestCounts = new Map();
 export async function POST(request: NextRequest) {
     let { code, language } = await request.json();
     const docker = new Dockerode();
-   
     try {
         // Check if the IP address has exceeded the rate limit
         const clientIP = request?.remoteAddr;
@@ -37,41 +36,40 @@ export async function POST(request: NextRequest) {
 
         let image;
         let command;
-                // Determine Docker image and command based on language
+        // Determine Docker image and command based on language
         switch (language) {
             case 'python':
-                image = 'python:latest';
+                image = `${process.env.AZURE_PATH}.azurecr.io/python:latest`;
                 command = ['python', '-c', code];
                 break;
             case 'javascript':
             case 'typescript':
-                image = 'node:latest';
-                
+                image = `${process.env.AZURE_PATH}.azurecr.io/node`;
+
                 command = ['node', '-e', code];
                 break;
-           case 'c':
+            case 'c':
                 code = removeCommentsCpp(code);
                 // Escape double quotes in the code
                 code = code.replace(/"/g, '\\"');
-                image = 'gcc:latest';
+                image = `${process.env.AZURE_PATH}.azurecr.io/gcc:latest`;
                 command = ['bash', '-c', `echo "${code}" > /tmp/code.c && gcc /tmp/code.c -o /tmp/code && /tmp/code`];
                 break;
             case 'cpp':
                 code = removeCommentsCpp(code);
                 // Escape single and double quotes in the code
                 // code = code.replace(/'/g, "\\'").replace(/"/g, '\\"');
-                image = 'gcc:latest';
+                image = `${process.env.AZURE_PATH}.azurecr.io/gcc:latest`;
                 command = [
                     'bash',
                     '-c',
-                     `echo '${code}' > /tmp/code.cpp && g++ /tmp/code.cpp -o /tmp/code && /tmp/code`
+                    `echo '${code}' > /tmp/code.cpp && g++ /tmp/code.cpp -o /tmp/code && /tmp/code`
                 ];
                 break;
 
             default:
                 return NextResponse.json({ error: "Unsupported language" }, { status: 400 });
         }
-
         // Create Docker container
         const container = await docker.createContainer({
             Image: image,
@@ -83,7 +81,6 @@ export async function POST(request: NextRequest) {
             OpenStdin: false,
             StdinOnce: false
         });
-
         // Start the Docker container
         await container.start();
 

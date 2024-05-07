@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes } from "@/route";
 import authConfig from "./auth.config";
+import { signOut } from "next-auth/react";
 
 const { auth } = NextAuth(authConfig);
 
@@ -27,6 +28,7 @@ export const middleware = auth((req): any => {
   const sessionExpiration = req.auth?.expires;
   if (sessionExpiration && new Date(sessionExpiration) < new Date()) {
     // Session has expired, redirect to login page
+    signOut();
     return Response.redirect(new URL(`/auth/login?callbackUrl=${encodeURIComponent(nextUrl.pathname + nextUrl.search || '')}`, nextUrl));
   }
   if (!isLoggedIn && !isPublicRoute) {

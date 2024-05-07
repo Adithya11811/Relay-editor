@@ -35,11 +35,11 @@ import { AnimatedTooltip } from '@/components/ui/animated-tooltip'
 import { Collaborators } from '@prisma/client'
 
 interface items {
-    id: number
-    name: string
-    link: string
-    image: string
-  }
+  id: number
+  name: string
+  link: string
+  image: string
+}
 
 const ProjectsPage = () => {
   const params = useSearchParams()
@@ -78,12 +78,12 @@ const ProjectsPage = () => {
   // }
 
 
-// console.log(colabs)
+  // console.log(colabs)
   useEffect(() => {
     const fetchHost = async () => {
       try {
         const response = await getHostByProjectID(projectId!)
-        setHost(response)
+        setHost(response);
       } catch (error) {
         console.error('Error fetching account:', error)
       }
@@ -109,7 +109,7 @@ const ProjectsPage = () => {
   const [extension, setExtension] = useState('')
   const [username, setUsername] = useState('')
   const [invitingUser, setInvitingUser] = useState(false)
-  
+
 
 
   useEffect(() => {
@@ -144,7 +144,7 @@ const ProjectsPage = () => {
         setFileContent(code)
         axios
           .post('/api/save', { code, fileName, files, project })
-          .then((response) => {})
+          .then((response) => { })
           .catch((error) => {
             console.log(error)
           })
@@ -152,29 +152,29 @@ const ProjectsPage = () => {
       .catch((err) => {
         const error = err.response.data.error
         console.log(error)
-        axios.post("/api/save", { code,fileName,files, project })
+        axios.post("/api/save", { code, fileName, files, project })
           .then(response => {
-            
+
           })
           .catch(error => {
             console.log(error);
           });
 
 
-        setOutputDetails({ output: "", error:error});
+        setOutputDetails({ output: "", error: error });
         setProcessing(false);
       });
   };
-  const inviteUser= ()=>{
-    axios.post('/api/invite',{username,account,project})
-    .then((response)=>{
-      if(response.status==200)
-        setInvitingUser(false);
-      setOpenInvite(false);
-    }).catch((error)=>{
-      console.log(error)
-      setInvitingUser(false)
-    })
+  const inviteUser = () => {
+    axios.post('/api/invite', { username, account, project })
+      .then((response) => {
+        if (response.status == 200)
+          setInvitingUser(false);
+        setOpenInvite(false);
+      }).catch((error) => {
+        console.log(error)
+        setInvitingUser(false)
+      })
   }
 
   const [aiflag, setaiflag] = useState(false)
@@ -233,7 +233,7 @@ const ProjectsPage = () => {
               </PopoverTrigger>
               <PopoverContent>Hello</PopoverContent>
             </Popover> */}
-            {}
+            { }
             {/* <Button
               disabled={!code && !!outputDetails?.error}
               className="border-2 border-green-200 bg-gradient-to-r from-green-400 to-green-800 text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
@@ -258,10 +258,10 @@ const ProjectsPage = () => {
                 !code && !!outputDetails?.error
                   ? {}
                   : {
-                      scale: [1, 1.1, 0.9, 1],
-                      rotate: [0, -5, 5, -5, 5, 0],
-                      transition: { duration: 0.6 },
-                    }
+                    scale: [1, 1.1, 0.9, 1],
+                    rotate: [0, -5, 5, -5, 5, 0],
+                    transition: { duration: 0.6 },
+                  }
               }
             >
               {/* <Star className="fill-current text-lg" /> */}
@@ -276,7 +276,7 @@ const ProjectsPage = () => {
               <AnimatedTooltip items={items} />
             )}
           </div> */}
-          {host !== undefined && host === account?.id && (
+          {host !== undefined && host.creator === account?.id && (
             <Button
               variant="runner"
               className="text-center w-fit"

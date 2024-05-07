@@ -6,12 +6,10 @@ import { AuthError } from "next-auth";
 import { generateVerificationToken, generateTwoFactorToken } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
 import { sendVerificationEmail, sendTwoFactorTokenEmail } from "@/lib/mail";
-import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
-import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
-import { db } from "@/lib/db";
 
 
-export async function POST(request: NextRequest){
+
+export async function POST(request: NextRequest) {
     const reqBody = await request.json();
     const { callbackUrl } = reqBody;
 
@@ -25,7 +23,7 @@ export async function POST(request: NextRequest){
         });
     }
 
-    const { email, password, code } = validatedFields.data;
+    const { email, password } = validatedFields.data;
 
     // Check if the user with the provided email exists
     const existingUser = await getUserByEmail(email);
@@ -52,56 +50,56 @@ export async function POST(request: NextRequest){
         });
     }
 
-    // If two-factor authentication is enabled and a code is provided, verify the code
-    if (existingUser.isTwoFactorEnabled && existingUser.email && code) {
-        const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
-        if (!twoFactorToken || twoFactorToken.token !== code) {
-            return NextResponse.json({
-                error: "Invalid Code"
-            }, {
-                status: 403
-            });
-        }
+    // // If two-factor authentication is enabled and a code is provided, verify the code
+    // if (existingUser.isTwoFactorEnabled && existingUser.email && code) {
+    //     const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
+    //     if (!twoFactorToken || twoFactorToken.token !== code) {
+    //         return NextResponse.json({
+    //             error: "Invalid Code"
+    //         }, {
+    //             status: 403
+    //         });
+    //     }
 
-        const hasExpired = new Date(twoFactorToken.expires) < new Date();
-        if (hasExpired) {
-            return NextResponse.json({
-                error: "Token expired"
-            }, {
-                status: 400
-            });
-        }
+    //     const hasExpired = new Date(twoFactorToken.expires) < new Date();
+    //     if (hasExpired) {
+    //         return NextResponse.json({
+    //             error: "Token expired"
+    //         }, {
+    //             status: 400
+    //         });
+    //     }
 
-        await db.twoFactorToken.delete({
-            where: { id: twoFactorToken.id }
-        });
+    //     await db.twoFactorToken.delete({
+    //         where: { id: twoFactorToken.id }
+    //     });
 
-        const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
-        if (existingConfirmation) {
-            await db.twoFactorConfirmation.delete({
-                where: { id: existingConfirmation.id }
-            });
-        }
+    //     const existingConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
+    //     if (existingConfirmation) {
+    //         await db.twoFactorConfirmation.delete({
+    //             where: { id: existingConfirmation.id }
+    //         });
+    //     }
 
-        await db.twoFactorConfirmation.create({
-            data: {
-                userId: existingUser.id,
-            }
-        });
-    } else if (existingUser.isTwoFactorEnabled && existingUser.email) {
-        // If two-factor authentication is enabled and no code is provided, send a two-factor token email
-        const twoFactorToken = await generateTwoFactorToken(existingUser.email);
-        await sendTwoFactorTokenEmail(
-            twoFactorToken.email,
-            twoFactorToken.token
-        );
+    //     await db.twoFactorConfirmation.create({
+    //         data: {
+    //             userId: existingUser.id,
+    //         }
+    //     });
+    // } else if (existingUser.isTwoFactorEnabled && existingUser.email) {
+    //     // If two-factor authentication is enabled and no code is provided, send a two-factor token email
+    //     const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+    //     await sendTwoFactorTokenEmail(
+    //         twoFactorToken.email,
+    //         twoFactorToken.token
+    //     );
 
-        return NextResponse.json({
-            twoFactor: true
-        }, {
-            status: 200
-        });
-    }
+    //     return NextResponse.json({
+    //         twoFactor: true
+    //     }, {
+    //         status: 200
+    //     });
+    // }
 
     try {
         // Sign in the user with provided credentials
@@ -109,7 +107,7 @@ export async function POST(request: NextRequest){
             email,
             password,
             redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
-        })        
+        })
         return NextResponse.json(result);
     } catch (error) {
         // Handle authentication errors

@@ -103,7 +103,7 @@ export const CreateACC = () => {
         .then((data) => {
           console.log(data)
           setSuccess(data.data.success)
-          router.push("/settings")
+          router.push("/profile")
         })
         .catch((error) => {
           setError(error.response.data.error)

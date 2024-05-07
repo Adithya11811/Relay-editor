@@ -43,30 +43,30 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String  @unique
-  username          String  @default("")
-  linkedinLink      String? @default("")
-  githubLink        String? @default("")
-  profileImage      String? @default("")
-  banner            String? @default("")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
+  id                String          @id @default(cuid())
+  userId            String          @unique
+  username          String          @default("")
+  linkedinLink      String?         @default("")
+  githubLink        String?         @default("")
+  profileImage      String?         @default("")
+  banner            String?         @default("")
+  refresh_token     String?         @db.Text
+  access_token      String?         @db.Text
+  expires_at        DateTime?
   friends           String[]
   follow            String[]
-  created_at        DateTime @default(now())
-  updated_at        DateTime @default(now())
-  projects          Project[]               // Adjust the relationship
-  user              User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  invitation Invitation[]
-  collaborators Collaborators[]
-  Post        Post[]
-  Comment     Comment[]
-  CommentVote CommentVote[]
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @default(now())
+  projects          Project[] // Adjust the relationship
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invitation        Invitation[]
+  collaborators     Collaborators[]
+  Post              Post[]
+  Comment           Comment[]
+  CommentVote       CommentVote[]
   subscriptions     Subscription[]
   votes             Vote[]
-createdSubreddits     Subreddit[]            @relation("CreatedBy")
+  createdSubreddits Subreddit[]     @relation("CreatedBy")
 }
 
 model VerificationToken {
@@ -106,48 +106,48 @@ model TwoFactorConfirmation {
 }
 
 model Project {
-  projectId           String       @id @default(uuid())
-  projectName         String
-  projectDescription  String
-  projectType         ProjectType
-  created_at          DateTime     @default(now())
-  updated_at          DateTime     @default(now())
-  creator             String       // Adjust the field
-  account             Account      @relation(fields: [creator], references: [id], onDelete: Cascade)
-  files     Files[]
+  projectId          String      @id @default(uuid())
+  projectName        String
+  projectDescription String
+  projectType        ProjectType
+  created_at         DateTime    @default(now())
+  updated_at         DateTime    @default(now())
+  creator            String // Adjust the field
+  account            Account     @relation(fields: [creator], references: [id], onDelete: Cascade)
+  files              Files[]
 }
 
-
-model Files{
-  id String @id @default(uuid())
-  name String
+model Files {
+  id         String   @id @default(uuid())
+  name       String
   belongs_to String
-  fileUrl String
-  project Project @relation(references: [projectId], fields: [belongs_to],onDelete: Cascade)
+  fileUrl    String
+  project    Project  @relation(references: [projectId], fields: [belongs_to], onDelete: Cascade)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 }
 
 model Invitation {
-  id        String   @id @default(uuid())
-  senderId  String      // ID of the user sending the invitation
-  recipientId String  // Email address of the recipient user
-  projectId String
-  status    String   // Status of the invitation (e.g., pending, accepted, rejected)
-  createdAt DateTime @default(now()) // Timestamp for when the invitation was created
-  updatedAt DateTime @updatedAt   // Timestamp for when the invitation was last updated
-  
+  id          String   @id @default(uuid())
+  senderId    String // ID of the user sending the invitation
+  recipientId String // Email address of the recipient user
+  projectId   String
+  status      String // Status of the invitation (e.g., pending, accepted, rejected)
+  createdAt   DateTime @default(now()) // Timestamp for when the invitation was created
+  updatedAt   DateTime @updatedAt // Timestamp for when the invitation was last updated
+
   // Define a relationship between Invitation and User models
-  sender  Account    @relation(fields: [senderId], references: [id])
+  sender Account @relation(fields: [senderId], references: [id])
 }
 
-model Collaborators{
-  projectId String
+model Collaborators {
+  id            String  @id @default(uuid())
+  projectId     String
   collaborators String
-  @@unique([projectId,collaborators])
-  collaborator Account @relation(fields: [collaborators],references: [id])
-}
+  collaborator  Account @relation(fields: [collaborators], references: [id], onDelete: Cascade)
 
+  @@unique([projectId, collaborators])
+}
 
 model Subreddit {
   id        String   @id @default(cuid())
@@ -156,15 +156,15 @@ model Subreddit {
   updatedAt DateTime @updatedAt
   posts     Post[]
 
-  creatorId   String?    // Adjusted to match the data type of Account's id
-  creator     Account?   @relation("CreatedBy", fields: [creatorId], references: [id]) 
+  creatorId   String? // Adjusted to match the data type of Account's id
+  creator     Account?       @relation("CreatedBy", fields: [creatorId], references: [id])
   subscribers Subscription[]
 
   @@index([name])
 }
 
 model Subscription {
-  user        Account     @relation(fields: [userId], references: [id])
+  user        Account   @relation(fields: [userId], references: [id])
   userId      String
   subreddit   Subreddit @relation(fields: [subredditId], references: [id])
   subredditId String
@@ -178,11 +178,11 @@ model Post {
   content     Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  author      Account      @relation(fields: [authorId], references: [id])
+  author      Account   @relation(fields: [authorId], references: [id])
   authorId    String
   subreddit   Subreddit @relation(fields: [subredditId], references: [id])
   subredditId String
-  comments    Comment[] 
+  comments    Comment[]
   votes       Vote[]
 }
 
@@ -190,7 +190,7 @@ model Comment {
   id        String   @id @default(cuid())
   text      String
   createdAt DateTime @default(now())
-  author    Account     @relation(fields: [authorId], references: [id])
+  author    Account  @relation(fields: [authorId], references: [id])
   authorId  String
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
@@ -204,7 +204,7 @@ model Comment {
 }
 
 model Vote {
-  user   Account     @relation(fields: [userId], references: [id])
+  user   Account  @relation(fields: [userId], references: [id])
   userId String
   post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
@@ -214,7 +214,7 @@ model Vote {
 }
 
 model CommentVote {
-  user      Account     @relation(fields: [userId], references: [id])
+  user      Account  @relation(fields: [userId], references: [id])
   userId    String
   comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String
