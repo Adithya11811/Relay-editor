@@ -61,7 +61,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
   const [account, setAccount] = useState()
   const [open, setOpen] = useState<boolean | undefined>(false)
   const [language, setLanguage] = useState(languageOptions[0]);
-  const [invites,setInvites] = useState();
+  const [invites, setInvites] = useState();
   const [invitedProjects, setInvitedProjects] = useState();
   const router = useRouter();
   const session = useSession();
@@ -124,22 +124,21 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
         break
     }
 
-    axios.post("/api/project",values)
-    .then((response)=>{
+    axios.post("/api/project", values)
+      .then((response) => {
         console.log(response)
         const projectId = response.data.project.projectId;
         router.push(`/editor?projectId=${projectId}`)
-    }).catch((error)=>{
+      }).catch((error) => {
         console.log(error)
-    })
+      })
   }
-  if((new Date(session?.data?.expires)) < (new Date(Date.now()))){
+  if ((new Date(session?.data?.expires)) < (new Date(Date.now()))) {
     signOut();
   }
-  if(!session)
-{
-  router.push("/auth/login")
-}
+  if (!session) {
+    router.push("/auth/login")
+  }
 
 
 
@@ -207,7 +206,7 @@ const Profile: React.FC<ProfileProps> = ({ id }) => {
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-2"
+                    className="space-y-2 text-white"
                   >
                     <LanguagesDropdown onSelectChange={onSelectChange} />
                     <div className=" space-y-6 m-2">

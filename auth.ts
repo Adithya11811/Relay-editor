@@ -13,7 +13,7 @@ type ExtendedUser = DefaultSession["user"] & {
   isOAuth: boolean;
   email: string;
   name: string;
-  expires:number;
+  expires:Date;
   accessToken?: string;
 };
 declare module "next-auth" {
@@ -74,14 +74,13 @@ async session({ token, session }) {
 
   if (session.user) {
     session.user.isTwoFactorEnabled = !!token.isTwoFactorEnabled; // Ensure proper conversion to boolean
-    session.user.expires = token.expires as number; // Ensure proper type assignment
+    session.user.expires = token.expires as Date ; // Ensure proper type assignment
   }
 
   const account = await getAccountByUserId(session.user.id);
   if (account && account.access_token) {
     session.user.accessToken = account.access_token;
   }
-
   return session;
 },
 
@@ -91,9 +90,7 @@ async jwt({ token }) {
   const existingUser = await getUserById(token.sub);
 
   if (!existingUser) return token;
-
   const existingAccount = await getAccountByUserId(existingUser.id);
-
   token.isOAuth = !!existingAccount;
   token.name = existingUser.name;
   token.email = existingUser.email;
